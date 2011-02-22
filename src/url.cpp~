@@ -1,0 +1,11 @@
+// Default Constructor
+url();
+
+// Takes two strings and resolves them into
+// an actual url
+url(String url1, String url2);
+// Copy Constructor
+url(url url);
+// Destructor
+~url();
+resolveUrl();
