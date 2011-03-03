@@ -6,12 +6,12 @@ using namespace std;
  * 
  * 
  */
-Page::Page();
+Page::page();
 
 /**
  * 
  * 
  */
-Page::Page(Url * url){
+Page::page(Url * url){
   this.url = url;
 }

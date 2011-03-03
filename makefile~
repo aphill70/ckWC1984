@@ -5,7 +5,7 @@ LIBSRC=utils/obj
 bin : bin/WebCrawl
 
 memTest : bin/TestDriver
-	valgrind --tool=memcheck --leak-check=yes --max-stackframe=5000000 --show-reachable=yes --suppressions=test/string.supp  bin/TestDriver
+	valgrind --tool=memcheck --leak-check=yes --max-stackframe=5000000 --show-reachable=yes --suppressions=test/config/string.supp  bin/TestDriver
 
 test : bin/TestDriver
 	bin/TestDriver
@@ -19,7 +19,7 @@ clean :
 bin/WebCrawl : obj/MainDriver.o lib/libutils.a obj/StopWords.o obj/Url.o
 	g++ -o bin/WebCrawl obj/*.o lib/libutils.a
 
-bin/TestDriver : obj/TestDriver.o lib/libutils.a obj/StopWords.o obj/Url.o
+bin/TestDriver : obj/TestDriver.o lib/libutils.a obj/StopWords.o obj/Url.o obj/PageDownloader.o obj/HTMLParser.o
 	g++ -o bin/TestDriver obj/*.o lib/libutils.a
 
 obj/MainDriver.o : src/MainDriver.cpp
@@ -35,7 +35,13 @@ obj/StopWords.o : src/StopWords.cpp inc/StopWords.h
 	g++ -c -o obj/StopWords.o -I inc/ -I utils/inc src/StopWords.cpp
 
 obj/Url.o : src/Url.cpp inc/Url.h
-	g++ -c -o obj/StopWords.o -I inc/ -I utils/inc src/StopWords.cpp
+	g++ -c -o obj/Url.o -I inc/ -I utils/inc src/Url.cpp
+
+obj/PageDownloader.o : src/PageDownloader.cpp inc/PageDownloader.h
+	g++ -c -o obj/PageDownloader.o -I inc/ -I utils/inc src/PageDownloader.cpp
+
+obj/HTMLParser.o : src/HTMLParser.cpp inc/HTMLParser.h
+	g++ -c -o obj/PageDownloader.o -I inc/ -I utils/inc src/PageDownloader.cpp
 
 # library
 #
