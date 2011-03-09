@@ -3,16 +3,20 @@
 #define HTMLPARSER_H
 
 #include <string>
+#include <string.h>
+#include <iostream>
 #include <boost/regex.hpp>
+#include <assert.h>
 
 #include "URLInputStream.h"
 #include "HTMLTokenizer.h"
 #include "CS240Exception.h"
 #include "StringUtil.h"
+#include "Debug.h"
 
 using namespace std;
 
-/* 
+/* HTMLParser Class
  * 
  *
  *
@@ -20,7 +24,12 @@ using namespace std;
 class HTMLParser{
 private:
   URLInputStream * inputStream;
+  
   string title;
+  string header;
+  string description;
+  
+  int desriptionlength;
   
   string* words;
   string* links;
@@ -44,6 +53,20 @@ public:
   ~HTMLParser();
   
   /**
+   * 
+   * 
+   * 
+   */
+  string * getWords();
+  
+  /**
+   * 
+   * 
+   * 
+   */
+  string * getLinks();
+  
+  /**
    * Parse the Page
    * 
    * @parameter url - path to the page to be parsed
@@ -65,16 +88,13 @@ public:
    */
   int getWordCount();
   
-private:
   /**
-   * bool isWhiteSpace
    * 
-   * test if a Text Token Contains only whitespace
    * 
-   * @return true if the line contains only whitespace else false
    */
-  bool isWhiteSpace(string token);
+  string getDescription();
   
+private:
   /**
    * void processHtml
    * 
@@ -94,6 +114,12 @@ private:
   void processHead(HTMLTokenizer & tokenizer);
   
   /**
+   * 
+   * 
+   */
+  void processBody(HTMLTokenizer & tokenizer);
+  
+  /**
    * Process Title
    * 
    * Processes all the tags and text between the title tags
@@ -103,6 +129,37 @@ private:
   void processTitle(HTMLTokenizer & tokenizer);
   
   /**
+   * function that takes a string of text extracted
+   * from a TEXT token and parses it for words and 
+   * links
+   */
+  void processText(string text);
+  
+  /**
+   * the passed in token should be an <a> link
+   * START_TAG it then checks it for a if it 
+   * is a fragment and loads it into the links
+   * array
+   */
+  void processLink(HTMLToken & token);
+  
+  /**
+   * 
+   * 
+   * 
+   */
+  void processHeader(HTMLTokenizer & token);
+
+  /**
+   * bool isWhiteSpace
+   * 
+   * test if a Text Token Contains only whitespace
+   * 
+   * @return true if the line contains only whitespace else false
+   */
+  bool isWhiteSpace(string token);
+
+  /**
    * isHeadStart
    * 
    * Tests if the passed in token is the opening start tag
@@ -111,6 +168,26 @@ private:
    * @return bool - true if tag is <head> else false
    */
   bool isHeadStart(HTMLToken & token);
+  
+  /**
+   * 
+   * 
+   * 
+   */
+  bool isHeadEnd(HTMLToken & token);
+ 
+  /**
+   * 
+   * 
+   * 
+   */
+  bool headToken(HTMLToken & token);
+  /**
+   * 
+   * 
+   * 
+   */
+  bool isBodyStart(HTMLToken & token);
   
   /**
    * isHTMLStart
@@ -133,13 +210,21 @@ private:
   bool isTitleStart(HTMLToken & token);
   
   /**
+   * 
+   * 
+   * 
+   */
+  bool isTitleEnd(HTMLToken & token);
+  
+  /**
    * isLinkStart
    * 
    * tests if the passed in token is the opening tag of a link
    * 
    * @parameter token - HTMLToken Object to be tested
    * @return bool true if tag is <a> else false
-   */  bool isLinkStart(HTMLToken & token);
+   */  
+  bool isLinkStart(HTMLToken & token);
   
   /**
    * tests the passed in token to see if it is
@@ -148,20 +233,19 @@ private:
   bool isText(HTMLToken & token);
   
   /**
-   * function that takes a string of text extracted
-   * from a TEXT token and parses it for words and 
-   * links
+   * Tests for a header tag i.e. <h1> <h2>...
+   * 
    */
-  void processText(string text);
+  bool isHeaderStart(HTMLToken & token);
   
   /**
-   * the passed in token should be an <a> link
-   * START_TAG it then checks it for a if it 
-   * is a fragment and loads it into the links
-   * array
+   * 
+   * 
+   * 
+   * 
    */
-  void processLink(HTMLToken & token);
-
+  bool isHeaderEnd(HTMLToken & token);
+  
   /**
    * tests if the passed in string is a stand alone
    * fragment that has not url attached to it.
@@ -187,5 +271,18 @@ private:
    * with the new array
    */
   void growLinkArray();
+  
+  /**
+   * 
+   * 
+   */
+  void processDescription(string text);
+  
+  /**
+   * 
+   * 
+   * 
+   */
+  void descriptionProcesser(string text);
 };
 #endif

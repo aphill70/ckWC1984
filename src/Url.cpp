@@ -3,11 +3,17 @@
 
 using namespace std;
 // Default Constructor
-Url::Url():path(NULL), location(NULL), scheme(NULL), query(NULL){
+Url::Url():scheme(""),location(""), path(""), query(""){
   return;
 }
 
 Url::Url(string url){
+  scheme = "";
+  location = "";
+  path = "";
+  query = "";
+  fragment = "";
+  
   string::iterator it;
   it = url.begin();
   for(int i = 0; i < 7; i++){
@@ -116,7 +122,4 @@ Url* Url::resolveUrl(string relUrl){
     }
   }
   return new Url(scheme + location + tempurl);
-}
-
-bool Url::test(ostream & os){
 }

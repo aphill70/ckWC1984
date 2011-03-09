@@ -1,15 +1,20 @@
 #include "HTMLParser.h"
-#include <iostream>
 
 using namespace std;
 
 HTMLParser::HTMLParser(){
   inputStream = NULL;
   title = "";
+  header = "";
+  description = "";
+  
+  desriptionlength = 0;
   arraysize = 64;
   linkarraysize = 64;
+  
   words = new string[arraysize];
   links = new string[linkarraysize];
+  
   wordcount = 0;
   linkcount = 0;
   return;
@@ -28,17 +33,39 @@ HTMLParser::~HTMLParser(){
     delete [] words;
     words = NULL;
     
+    delete [] links;
+    links = NULL;
+    
     title = "";
     arraysize = 0;
     wordcount = 0;
 }
 
+string * HTMLParser::getWords(){
+  return words;
+}
+
+string * HTMLParser::getLinks(){
+  
+}
+
+string HTMLParser::getDescription(){
+  if(!title.empty()){
+    return title;
+  }else if(!header.empty()){
+    return header;
+  }else{
+    return description;
+  }
+}
+
 int HTMLParser::getWordCount(){
+  TRACE(wordcount);
   return wordcount;
 }
 
 int HTMLParser::getLinkCount(){
-  
+  return linkcount;
 }
 
 void HTMLParser::runParser(string url){
@@ -55,7 +82,7 @@ void HTMLParser::runParser(string url){
     }
 
   delete tokenizer;
-    
+  
   }
   catch (std::exception &e){
     cout << "Exception Occurred:" << e.what() << endl;
@@ -67,6 +94,186 @@ void HTMLParser::runParser(string url){
     cout << "Unknown Exception Occurred" << endl;
   }
 
+}
+
+void HTMLParser::processHtml(HTMLTokenizer & tokenizer){
+   assert(tokenizer.HasNextToken());
+
+  while(tokenizer.HasNextToken()){
+
+    HTMLToken curToken = tokenizer.GetNextToken();
+  
+    if(isHeadStart(curToken)){
+      TRACE("Head Start");
+      processHead(tokenizer);
+    }else if(isBodyStart(curToken))
+      processBody(tokenizer);
+  }  
+}
+
+void HTMLParser::processHead(HTMLTokenizer & tokenizer){
+  assert(tokenizer.HasNextToken());
+ 
+  while(tokenizer.HasNextToken()){
+    HTMLToken headToken = tokenizer.GetNextToken();
+    
+    if(isHeadEnd(headToken))
+      return;
+    
+    if(isTitleStart(headToken)){
+      processTitle(tokenizer);
+      TRACE("TITLE Start");
+      
+    }
+  }// End While Loop
+}
+
+void HTMLParser::processBody(HTMLTokenizer & tokenizer){
+  assert(tokenizer.HasNextToken());
+  
+  while(tokenizer.HasNextToken()){
+    HTMLToken curToken = tokenizer.GetNextToken();
+    
+    if(isText(curToken)){
+      string tmpstr = curToken.GetValue();
+      processDescription(tmpstr);
+      processText(tmpstr);
+    }else if(isLinkStart(curToken))
+      processLink(curToken);
+    if(isHeaderStart(curToken) && header.empty()){
+      processHeader(tokenizer);
+    } 
+    
+  }
+}
+
+void HTMLParser::processTitle(HTMLTokenizer & tokenizer){
+  assert(tokenizer.HasNextToken());
+  while(tokenizer.HasNextToken()){
+    HTMLToken titleToken = tokenizer.GetNextToken();
+    
+    if(titleToken.GetType() == TEXT){
+      title += titleToken.GetValue();
+      processText(titleToken.GetValue());
+    }
+    
+    if(isTitleEnd(titleToken))
+      return;
+    
+  }
+}
+
+void HTMLParser::processHeader(HTMLTokenizer & tokenizer){
+  while(tokenizer.HasNextToken()){
+    HTMLToken curToken = tokenizer.GetNextToken();
+    
+    if(isText(curToken)){
+      header += curToken.GetValue();
+      processText(curToken.GetValue());
+    }else if(isHeaderEnd(curToken))
+      return;
+  }
+}
+
+void HTMLParser::processText(string text){
+  assert(!text.empty());
+  
+  processDescription(text);
+    
+  StringUtil::ToLower(text);
+  StringUtil::Trim(text);
+
+  string exp = "[a-zA-Z][a-zA-Z0-9_-]*";
+  const int MATCH = 0;
+
+  boost::regex re(exp, boost::regex_constants::icase);
+
+  boost::sregex_token_iterator finder(text.begin(), text.end(), re, MATCH);
+  boost::sregex_token_iterator no_match;
+
+  while(finder != no_match){
+    string regtok(*finder);
+    words[wordcount++] = regtok;
+//     TRACE("\"" << regtok << "\"");
+    *finder++; //Move to the next token, or to no_match state
+ 		
+    if(wordcount == arraysize)
+    growArray();
+  }
+}
+
+void HTMLParser::processDescription(string text){
+  if(desriptionlength != 100)
+    descriptionProcesser(text);
+  
+}
+
+void HTMLParser::processLink(HTMLToken & token){
+  
+  if(token.AttributeExists("href") && !isFragment(token.GetAttribute("href"))){
+    links[linkcount++] = token.GetAttribute("href");
+    if(linkcount == linkarraysize)
+      growLinkArray();
+  }
+}
+
+void HTMLParser::descriptionProcesser(string text){
+  string::iterator p = text.begin();
+  while(p < text.end()){
+    description += *p;
+    
+    if(isalnum(*p) && desriptionlength != 100){
+      desriptionlength++;
+    }else if(desriptionlength == 100)
+      return;
+    p++;
+  }
+}
+
+bool HTMLParser::isHeadEnd(HTMLToken & token){
+  return (token.GetType() == TAG_END && token.GetValue().compare("head") == 0);
+}
+
+bool HTMLParser::isHeadStart(HTMLToken & token){
+  return (token.GetType() == TAG_START && token.GetValue().compare("head") == 0);
+}
+
+bool HTMLParser::isTitleStart(HTMLToken & token){
+  return (token.GetType() == TAG_START && token.GetValue() == "title");
+}
+
+bool HTMLParser::isTitleEnd(HTMLToken & token){
+  return (token.GetType() == TAG_END && token.GetValue().compare("title") == 0);
+}
+
+bool HTMLParser::isBodyStart(HTMLToken & token){
+  return (token.GetType() == TAG_START && token.GetValue() == "body");
+}
+
+bool HTMLParser::isHTMLStart(HTMLToken & token){
+  return (token.GetType() == TAG_START && token.GetValue() == "html");  
+}
+
+bool HTMLParser::isText(HTMLToken & token){
+  return (token.GetType() == TEXT && !isWhiteSpace(token.GetValue()));
+}
+
+bool HTMLParser::isLinkStart(HTMLToken & token){
+  return (token.GetType() == TAG_START && token.GetValue() == "a");  
+}
+
+bool HTMLParser::isHeaderStart(HTMLToken & token){
+	boost::regex re("h[1-9]");
+	return (boost::regex_match(token.GetValue(), re) && token.GetType() == TAG_START);
+}
+bool HTMLParser::isHeaderEnd(HTMLToken & token){
+	boost::regex re("[hH][1-9]");
+	return (boost::regex_match(token.GetValue(), re) && token.GetType() == TAG_END);
+}
+
+bool HTMLParser::isFragment(string link){
+	boost::regex re("#[ a-zA-Z0-9_-]*");
+	return (boost::regex_match(link, re));
 }
 
 bool HTMLParser::isWhiteSpace(string token){
@@ -81,109 +288,6 @@ bool HTMLParser::isWhiteSpace(string token){
   else
     return false;  
 }
-
-
-void HTMLParser::processHtml(HTMLTokenizer & tokenizer){
-
-  while(tokenizer.HasNextToken()){
-
-    HTMLToken curToken = tokenizer.GetNextToken();
-  
-    if(isHeadStart(curToken)){
-	processHead(tokenizer);
-    }else if(isText(curToken)){
-      string tmpstr = curToken.GetValue();
-
-      processText(tmpstr);
-    }else if(isLinkStart(curToken))
-      processLink(curToken);
-  }  
-}
-
-void HTMLParser::processHead(HTMLTokenizer & tokenizer){
- 
-  while(tokenizer.HasNextToken()){
-    
-    HTMLToken headToken = tokenizer.GetNextToken();
-    
-    if(headToken.GetType() == TAG_END && headToken.GetValue().compare("head") == 0)
-      return;
-    
-    if(isTitleStart(headToken))
-      processTitle(tokenizer);
-
-  }// End While Loop
-}
-
-void HTMLParser::processTitle(HTMLTokenizer & tokenizer){
-  HTMLToken titleToken = tokenizer.GetNextToken();
-  if(titleToken.GetType() != TAG_END)
-    title = titleToken.GetValue();
-}
-
-void HTMLParser::processText(string text){
-      StringUtil::ToLower(text);
-      StringUtil::Trim(text);
-      
-	string exp = "[a-zA-Z][a-zA-Z0-9_-]*";
-	const int MATCH = 0;
-	
-	boost::regex re(exp, boost::regex_constants::icase);
-
- 	boost::sregex_token_iterator finder(text.begin(), text.end(), re, MATCH);
- 	boost::sregex_token_iterator no_match;
-
- 	while(finder != no_match)
- 	{
- 		//This is one way of getting the token
- 		string regtok(*finder);
-		words[wordcount++] = regtok;
-		
- 		
-//  		cout << "\"" << regtok << "\"" << endl;
- 		*finder++; //Move to the next token, or to no_match state
- 		
- 		if(wordcount == arraysize)
-		  growArray();
- 	}
-//  	cout << wordcount << endl;
-}
-
-void HTMLParser::processLink(HTMLToken & token){
-  
-  if(token.AttributeExists("href") && !isFragment(token.GetAttribute("href"))){
-    links[linkcount++] = token.GetAttribute("href");
-    if(linkcount == linkarraysize)
-      growLinkArray();
-  }
-}
-
-bool HTMLParser::isHeadStart(HTMLToken & token){
-
-  return (token.GetType() == TAG_START && token.GetValue() == "head");
-}
-
-bool HTMLParser::isHTMLStart(HTMLToken & token){
-  return (token.GetType() == TAG_START && token.GetValue() == "html");  
-}
-
-bool HTMLParser::isTitleStart(HTMLToken & token){
-  return (token.GetType() == TAG_START && token.GetValue() == "title");
-}
-
-bool HTMLParser::isText(HTMLToken & token){
-  return (token.GetType() == TEXT && !isWhiteSpace(token.GetValue()));
-}
-
-bool HTMLParser::isLinkStart(HTMLToken & token){
-  return (token.GetType() == TAG_START && token.GetValue() == "a");  
-}
-
-bool HTMLParser::isFragment(string link){
-	boost::regex re("#[ a-zA-Z0-9_-]*");
-	return (boost::regex_match(link, re));
-}
-
 
 void HTMLParser::growArray(){
   int tmpsize = arraysize * 2;

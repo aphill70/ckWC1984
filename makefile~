@@ -17,32 +17,46 @@ clean :
 	@- rm -f bin/* > /dev/null 2>&1
 
 bin/WebCrawl : obj/MainDriver.o lib/libutils.a obj/StopWords.o obj/Url.o
-	g++ -o bin/WebCrawl obj/*.o lib/libutils.a libboost_regex-vc71-mt-d-1_34.lib
+	g++ -o bin/WebCrawl obj/*.o lib/libutils.a -lboost_regex
 
-bin/TestDriver : obj/TestDriver.o lib/libutils.a obj/StopWords.o obj/Url.o obj/PageDownloader.o obj/HTMLParser.o
-	g++ -o bin/TestDriver obj/*.o lib/libutils.a libboost_regex-vc71-mt-d-1_34.lib
+bin/TestDriver : obj/TestDriver.o lib/libutils.a obj/StopWords.o obj/Url.o obj/PageDownloader.o obj/HTMLParser.o obj/Occurrence.o obj/Page.o obj/OccurrenceSet.o obj/PageQueue.o obj/KeyWordIndex.o
+	g++ -o -g bin/TestDriver obj/*.o lib/libutils.a -lboost_regex
 
 obj/MainDriver.o : src/MainDriver.cpp
-	g++ -c -Wall -o obj/MainDriver.o -I inc/ -I utils/inc src/MainDriver.cpp
+	g++ -c -g -Wall -o obj/MainDriver.o -I inc/ -I utils/inc src/MainDriver.cpp
 
 obj/TestDriver.o : src/TestDriver.cpp
-	g++ -c -Wall -o obj/TestDriver.o -I inc/ -I utils/inc src/TestDriver.cpp
+	g++ -c -g -Wall -o obj/TestDriver.o -I inc/ -I utils/inc src/TestDriver.cpp
 
 obj/WebCrawler.o : src/WebCrawler.cpp inc/WebCrawler.h
-	g++ -c -o obj/WebCrawler.o -I inc/ -I utils/inc src/WebCrawler.cpp
+	g++ -c -g -Wall -o obj/WebCrawler.o -I inc/ -I utils/inc src/WebCrawler.cpp
 
 obj/StopWords.o : src/StopWords.cpp inc/StopWords.h
-	g++ -c -o obj/StopWords.o -I inc/ -I utils/inc src/StopWords.cpp
+	g++ -c -g -Wall -o obj/StopWords.o -I inc/ -I utils/inc src/StopWords.cpp
 
 obj/Url.o : src/Url.cpp inc/Url.h
-	g++ -c -o obj/Url.o -I inc/ -I utils/inc src/Url.cpp
+	g++ -c -g -Wall -o obj/Url.o -I inc/ -I utils/inc src/Url.cpp
 
 obj/PageDownloader.o : src/PageDownloader.cpp inc/PageDownloader.h
-	g++ -c -o obj/PageDownloader.o -I inc/ -I utils/inc src/PageDownloader.cpp
+	g++ -c -g -Wall -o obj/PageDownloader.o -I inc/ -I utils/inc src/PageDownloader.cpp
 
 obj/HTMLParser.o : src/HTMLParser.cpp inc/HTMLParser.h
-	g++ -c -o obj/HTMLParser.o -I inc/ -I utils/inc src/HTMLParser.cpp
+	g++ -c -g -Wall -o obj/HTMLParser.o -I inc/ -I utils/inc src/HTMLParser.cpp
 
+obj/Occurrence.o : src/Occurrence.cpp inc/Occurrence.h
+	g++ -c -g -Wall -o obj/Occurrence.o -I inc/ -I utils/inc src/Occurrence.cpp
+
+obj/Page.o : src/Page.cpp inc/Page.h
+	g++ -c -g -Wall -o obj/Page.o -I inc/ -I utils/inc src/Page.cpp
+
+obj/OccurrenceSet.o : src/OccurrenceSet.cpp inc/OccurrenceSet.h
+	g++ -c -g -Wall -o obj/OccurrenceSet.o -I inc/ -I utils/inc src/OccurrenceSet.cpp
+
+obj/PageQueue.o : src/PageQueue.cpp inc/PageQueue.h
+	g++ -c -g -Wall -o obj/PageQueue.o -I inc/ -I utils/inc src/PageQueue.cpp
+
+obj/KeyWordIndex.o : src/KeyWordIndex.cpp inc/KeyWordIndex.h
+	g++ -c -g -Wall -o obj/KeyWordIndex.o -I inc/ -I utils/inc src/KeyWordIndex.cpp
 # library
 #
 

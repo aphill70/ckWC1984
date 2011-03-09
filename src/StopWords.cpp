@@ -58,7 +58,7 @@ bool StopWords::loadfile(string fileName){
 	// close file
 	//
 	file.close();
- 
+	return true;
 }
 
 void StopWords::growarray(){
@@ -75,8 +75,6 @@ void StopWords::growarray(){
   
   delete [] stopwords;
   stopwords = tmparray;
-  
-  string * p = stopwords;  
 }
 
 bool StopWords::contains(string word){
@@ -91,8 +89,4 @@ int comparestrs (const void * a, const void * b){
   string str1 = *(string*) a;
   string str2 = *(string*) b;
   return str1.compare(str2);
-}
-
-bool StopWords::test(ostream & os){
-
 }
