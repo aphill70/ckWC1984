@@ -17,10 +17,10 @@ clean :
 	@- rm -f bin/* > /dev/null 2>&1
 
 bin/WebCrawl : obj/MainDriver.o lib/libutils.a obj/StopWords.o obj/Url.o
-	g++ -o bin/WebCrawl obj/*.o lib/libutils.a
+	g++ -o bin/WebCrawl obj/*.o lib/libutils.a libboost_regex-vc71-mt-d-1_34.lib
 
 bin/TestDriver : obj/TestDriver.o lib/libutils.a obj/StopWords.o obj/Url.o obj/PageDownloader.o obj/HTMLParser.o
-	g++ -o bin/TestDriver obj/*.o lib/libutils.a
+	g++ -o bin/TestDriver obj/*.o lib/libutils.a libboost_regex-vc71-mt-d-1_34.lib
 
 obj/MainDriver.o : src/MainDriver.cpp
 	g++ -c -Wall -o obj/MainDriver.o -I inc/ -I utils/inc src/MainDriver.cpp
@@ -41,7 +41,7 @@ obj/PageDownloader.o : src/PageDownloader.cpp inc/PageDownloader.h
 	g++ -c -o obj/PageDownloader.o -I inc/ -I utils/inc src/PageDownloader.cpp
 
 obj/HTMLParser.o : src/HTMLParser.cpp inc/HTMLParser.h
-	g++ -c -o obj/PageDownloader.o -I inc/ -I utils/inc src/PageDownloader.cpp
+	g++ -c -o obj/HTMLParser.o -I inc/ -I utils/inc src/HTMLParser.cpp
 
 # library
 #

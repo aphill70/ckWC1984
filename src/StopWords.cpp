@@ -10,7 +10,7 @@ StopWords::StopWords(){
   
 }
 
-StopWords::StopWords( string fileName){
+StopWords::StopWords(string fileName){
   containerSize = 128;
   stopwords = new string[containerSize];
   

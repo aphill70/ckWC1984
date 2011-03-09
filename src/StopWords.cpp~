@@ -94,14 +94,5 @@ int comparestrs (const void * a, const void * b){
 }
 
 bool StopWords::test(ostream & os){
-  string testFile[5] = {"test/stopword.txt", "test/stopword2.txt"};
-  
-  for(int i = 0; i < 2; i++){
-    cout << "Starting File Load Test . . . .";
-    StopWords * testStop = new StopWords(testFile[i]);
-
-    PrintTestResults(TestContains(testStop, testFile[i]));
-    delete testStop;
-  }
 
 }
