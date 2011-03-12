@@ -1,6 +1,9 @@
 EXE=
 LIBSRC=utils/obj
 
+memBin : bin/WebCrawl
+	valgrind --tool=memcheck --leak-check=yes --max-stackframe=5000000 --show-reachable=yes --suppressions=test/config/string.supp  bin/WebCrawl http://www.cksuperman.com/test.html test/output/output.txt ./test/input/stopword.txt
+
 
 bin : bin/WebCrawl
 
@@ -16,10 +19,10 @@ clean :
 	@- rm -f utils/obj/*.o > /dev/null 2>&1
 	@- rm -f bin/* > /dev/null 2>&1
 
-bin/WebCrawl : obj/MainDriver.o lib/libutils.a obj/StopWords.o obj/Url.o
+bin/WebCrawl : obj/MainDriver.o lib/libutils.a obj/Url.o obj/WebCrawler.o obj/PageQueue.o obj/PageHistory.o obj/KeyWordIndex.o
 	g++ -o bin/WebCrawl obj/*.o lib/libutils.a -lboost_regex
 
-bin/TestDriver : obj/TestDriver.o lib/libutils.a obj/StopWords.o obj/Url.o obj/PageDownloader.o obj/HTMLParser.o obj/Occurrence.o obj/Page.o obj/OccurrenceSet.o obj/PageQueue.o obj/KeyWordIndex.o
+bin/TestDriver : obj/TestDriver.o lib/libutils.a obj/StopWords.o obj/Url.o obj/PageDownloader.o obj/HTMLParser.o obj/Occurrence.o obj/Page.o obj/OccurrenceSet.o obj/PageQueue.o obj/KeyWordIndex.o obj/PageHistory.o
 	g++ -g -o bin/TestDriver obj/*.o lib/libutils.a -lboost_regex
 
 obj/MainDriver.o : src/MainDriver.cpp
@@ -28,7 +31,7 @@ obj/MainDriver.o : src/MainDriver.cpp
 obj/TestDriver.o : src/TestDriver.cpp
 	g++ -c -g -Wall -o obj/TestDriver.o -I inc/ -I utils/inc src/TestDriver.cpp
 
-obj/WebCrawler.o : src/WebCrawler.cpp inc/WebCrawler.h
+obj/WebCrawler.o : src/WebCrawler.cpp inc/WebCrawler.h obj/Url.o obj/StopWords.o
 	g++ -c -g -Wall -o obj/WebCrawler.o -I inc/ -I utils/inc src/WebCrawler.cpp
 
 obj/StopWords.o : src/StopWords.cpp inc/StopWords.h
@@ -46,17 +49,21 @@ obj/HTMLParser.o : src/HTMLParser.cpp inc/HTMLParser.h
 obj/Occurrence.o : src/Occurrence.cpp inc/Occurrence.h
 	g++ -c -g -Wall -o obj/Occurrence.o -I inc/ -I utils/inc src/Occurrence.cpp
 
-obj/Page.o : src/Page.cpp inc/Page.h
+obj/Page.o : src/Page.cpp inc/Page.h obj/HTMLParser.o obj/Url.o
 	g++ -c -g -Wall -o obj/Page.o -I inc/ -I utils/inc src/Page.cpp
 
 obj/OccurrenceSet.o : src/OccurrenceSet.cpp inc/OccurrenceSet.h
 	g++ -c -g -Wall -o obj/OccurrenceSet.o -I inc/ -I utils/inc src/OccurrenceSet.cpp
 
-obj/PageQueue.o : src/PageQueue.cpp inc/PageQueue.h
+obj/PageQueue.o : src/PageQueue.cpp inc/PageQueue.h obj/Page.o
 	g++ -c -g -Wall -o obj/PageQueue.o -I inc/ -I utils/inc src/PageQueue.cpp
 
-obj/KeyWordIndex.o : src/KeyWordIndex.cpp inc/KeyWordIndex.h
+obj/KeyWordIndex.o : src/KeyWordIndex.cpp inc/KeyWordIndex.h obj/OccurrenceSet.o
 	g++ -c -g -Wall -o obj/KeyWordIndex.o -I inc/ -I utils/inc src/KeyWordIndex.cpp
+
+obj/PageHistory.o : src/PageHistory.cpp inc/PageHistory.h obj/Page.o
+	g++ -c -g -Wall -o obj/PageHistory.o -I inc/ -I utils/inc src/PageHistory.cpp
+
 # library
 #
 

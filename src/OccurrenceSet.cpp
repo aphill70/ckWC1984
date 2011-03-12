@@ -2,7 +2,7 @@
 using namespace std;
 
 //!  No-arg constructor.  Initializes an empty OccurrenceSet
-OccurrenceSet::OccurrenceSet(): size(0), root(0)
+OccurrenceSet::OccurrenceSet():value(""), size(0), root(0), iterator(NULL), iteratorsize(0)
 {
   return;
 }
@@ -34,7 +34,10 @@ void OccurrenceSet::Free(OccurrenceNode * p)
     delete p;
     p = NULL;
   }
-root = NULL;
+  root = NULL;
+
+  delete [] iterator;
+  iterator = NULL;
 }
 
 OccurrenceNode * OccurrenceSet::ReCopy(OccurrenceNode * p)
@@ -189,3 +192,31 @@ OccurrenceNode * OccurrenceSet::Find(const std::string & v) const
 //!
 //!  @return true if v was removed from the tree, or false if v was not in the tree
 //bool Remove(const std::string & v);
+
+void OccurrenceSet::IteratorInit(){
+  iteratorsize = 0;
+  iterator = new OccurrenceNode*[size];
+  
+  if(root != NULL)
+  TreeTraversal(root, iterator);
+  
+  iteratorsize = 0;
+  
+}
+
+void OccurrenceSet::TreeTraversal(OccurrenceNode * p, OccurrenceNode * container[]){
+  if(p->left != 0)
+    TreeTraversal(p->left, container);
+  
+    container[iteratorsize++] = p;
+  if(p->right != 0)
+    TreeTraversal(p->right, container);
+}
+
+bool OccurrenceSet::HasNext(){
+  return (iteratorsize < size);
+}
+
+OccurrenceNode * OccurrenceSet::Next(){
+  return iterator[iteratorsize++];
+}

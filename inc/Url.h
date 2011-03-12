@@ -1,8 +1,9 @@
-
 #ifndef URL_H
 #define URL_H
 
 #include <string>
+
+#include <boost/regex.hpp>
 using namespace std;
 
 /* URL Class

@@ -156,7 +156,7 @@ class KeyWordIndex {
 	  int size;
 	  KeyWordNode * root;
 	  
-	  KeyWordNode * iterator;
+	  KeyWordNode ** iterator;
 	  int iteratorsize;
 };
 

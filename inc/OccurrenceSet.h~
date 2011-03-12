@@ -20,7 +20,7 @@ count(1), value(v), left(NULL), right(NULL) {
 
 //! Copy Constructor
 OccurrenceNode(const OccurrenceNode & other) : 
-value(other.value),left(other.left),right(other.right){
+count(other.count), value(other.value),left(other.left),right(other.right){
 }
 
 const int & getCount(){
@@ -116,6 +116,13 @@ OccurrenceNode * Find(const std::string & v) const;
 //!  @return true if v was removed from the tree, or false if v was not in the tree
 //bool Remove(const std::string & v);
 
+
+void IteratorInit();
+
+bool HasNext();
+
+OccurrenceNode * Next();
+
 void setValue(std::string word);
 
 private:
@@ -123,10 +130,15 @@ private:
   int size;
   OccurrenceNode * root;
 
-  
+  void TreeTraversal(OccurrenceNode* p, OccurrenceNode* container[]);
   OccurrenceNode * ReCopy(OccurrenceNode * p);
   OccurrenceNode * ReInsert(const std::string & v, OccurrenceNode * p, OccurrenceNode * nn);
   void Free(OccurrenceNode * p);
+
+  OccurrenceNode ** iterator;
+
+  int iteratorsize;
+
 };
 
 

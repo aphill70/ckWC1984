@@ -2,6 +2,7 @@
 #define CS240_LINKED_LIST_H
 
 #include <string>
+#include "Page.h"
 
 //! PageNode implements a doubly-linked list node
 class PageNode {
@@ -9,7 +10,7 @@ class PageNode {
 	public:
 	
 		//!  Constructor
-		PageNode(const std::string & v, PageNode * p, PageNode * n) :
+		PageNode(Page * v, PageNode * p, PageNode * n) :
 		  value(v), prev(p), next(n)
 		{
 		}
@@ -19,9 +20,9 @@ class PageNode {
 		   value(other.value),prev(other.prev),next(other.next)
 		{
 		}
-	
+		
 		//!  Read-only public methods for use by clients of the PageQueue class
-		const std::string & GetValue() const
+		Page * GetValue() const
 		{
 		  return value;
 		}
@@ -41,8 +42,7 @@ class PageNode {
 		//! Assignment operator 
 		PageNode & operator=(const PageNode & other)
 		{
-			if(this!=&other)
-			{
+			if(this!=&other){
 				value=other.value;
 				prev=other.prev;
 				next=other.next;
@@ -51,7 +51,7 @@ class PageNode {
 		}
 	
 	private:
-		std::string value;        //!< value stored in the node
+		Page * value;        //!< value stored in the node
 		PageNode * prev;            //!< pointer to previous node in the list
 		PageNode * next;            //!< pointer to next node in the list
 };
@@ -109,7 +109,7 @@ class PageQueue
 		//!      If n is NULL, the new node should be inserted at the beginning of the list.
 		//!
 		//!  @return a pointer to the newly inserted node
-		PageNode * Insert(const std::string & v, PageNode * n);
+		PageNode * Insert(Page * v, PageNode * n);
 	
 	
 		//! Searches for the first occurrence of value v that appears in the list 
@@ -120,7 +120,7 @@ class PageQueue
 		//!      If n is NULL, the list should be searched from the beginning.
 		//!
 		//!  @return a pointer to the node containing v, or NULL if v is not found
-		PageNode * Find(const std::string & v, PageNode * n) const;
+		PageNode * Find(Page* v, PageNode* n) const;
 	
 	
 		//!  Removes node n from the list
@@ -135,8 +135,6 @@ class PageQueue
 
 	  void Init(const PageQueue & other);
 	  void Free();
-
-  
 };
 
 

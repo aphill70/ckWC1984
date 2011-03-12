@@ -28,8 +28,6 @@ void PageHistory::Free(PageHistoryNode * p)
   size = 0;
   if(p != NULL)
   {
-
-
     Free(p->left);
     Free(p->right);
     delete p;

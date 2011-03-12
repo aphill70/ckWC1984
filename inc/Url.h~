@@ -1,8 +1,9 @@
-
 #ifndef URL_H
 #define URL_H
 
 #include <string>
+
+#include <boost/regex.h>
 using namespace std;
 
 /* URL Class
@@ -100,7 +101,7 @@ class Url{
       * 
       * 
       */
-     string getShortUrl() const;
+     string getShortUrl();
       
      /**
       * 

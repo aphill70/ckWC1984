@@ -1,9 +1,10 @@
 #include "Url.h"
+
 #include <iostream>
 
 using namespace std;
 // Default Constructor
-Url::Url():path(""), location(""), scheme(""), query(""){
+Url::Url():scheme(""),location(""), path(""), query(""), fragment(""){
   return;
 }
 
@@ -46,6 +47,9 @@ Url::Url(string url){
       it++;
     }
   }
+
+  if(path.empty())
+    path = "/";
 }
 
 // Destructor
@@ -87,17 +91,35 @@ string Url::getFragment(){
 
 
 Url* Url::resolveUrl(string relUrl){
+  
+  if(relUrl.find("http://") != -1 || relUrl.find("file://") != -1){
+    cout << relUrl << endl;
+    return new Url(relUrl);
+    
+  }
+  
   string::iterator it;
   it = relUrl.begin();
   
   string tempurl(path);
   bool firstPass = false;
-  
+
   if(tempurl.size() - tempurl.rfind('/') != 1)
     tempurl.erase(tempurl.rfind('/'));
+
   
   while(it != relUrl.end()){
     string temprelUrl(relUrl);
+  
+    if(isalnum(*it)){
+      tempurl += "/";
+      while(it != relUrl.end()){
+	tempurl += *it;
+	it++;
+      }
+      return new Url(scheme + location + tempurl);
+    }
+  
 
     if(*it == '.'){
       it++;
@@ -111,7 +133,6 @@ Url* Url::resolveUrl(string relUrl){
 	continue;
       }
     }else if(*it == '/'){
-      cout << "woops" << endl;
       it++;
     }else{
       if(!firstPass)

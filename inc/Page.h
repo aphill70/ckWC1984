@@ -52,12 +52,18 @@ public:
    * 
    */
   void parsePage();
+  
+  /**
+   * 
+   * 
+   */
+  void ExtractData();
 
   /**
    * 
    * 
    */
-  Url getUrl() const;
+  Url * getUrl() const;
 
   /**
    * 

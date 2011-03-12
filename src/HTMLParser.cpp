@@ -22,18 +22,16 @@ HTMLParser::HTMLParser(){
   
 HTMLParser::~HTMLParser(){
   
-  if(inputStream != NULL){
-    
     if(inputStream->IsOpen())
       inputStream->Close();
   
     delete inputStream;
     inputStream = NULL;    
-  }
-    delete [] words;
+
+     delete [] words;
     words = NULL;
     
-    delete [] links;
+     delete [] links;
     links = NULL;
     
     title = "";
@@ -140,9 +138,11 @@ void HTMLParser::processBody(HTMLTokenizer & tokenizer){
       processText(tmpstr);
     }else if(isLinkStart(curToken))
       processLink(curToken);
-    if(isHeaderStart(curToken) && header.empty()){
-      processHeader(tokenizer);
-    } 
+    else if(isHeaderStart(curToken) && header.empty()){
+	processHeader(tokenizer);
+    }else if(isScriptStart(curToken)){
+      processScript(tokenizer);
+    }
     
   }
 }
@@ -217,6 +217,16 @@ void HTMLParser::processLink(HTMLToken & token){
   }
 }
 
+void HTMLParser::processScript(HTMLTokenizer & tokenizer){
+
+  while(tokenizer.HasNextToken()){
+    HTMLToken curToken = tokenizer.GetNextToken();
+
+    if(isScriptEnd(curToken))
+      return;
+  }
+}
+
 void HTMLParser::descriptionProcesser(string text){
   string::iterator p = text.begin();
   while(p < text.end()){
@@ -260,6 +270,14 @@ bool HTMLParser::isText(HTMLToken & token){
 
 bool HTMLParser::isLinkStart(HTMLToken & token){
   return (token.GetType() == TAG_START && token.GetValue() == "a");  
+}
+
+bool HTMLParser::isScriptStart(HTMLToken & token){
+  return (token.GetType() == TAG_START && token.GetValue() == "script");  
+}
+
+bool HTMLParser::isScriptEnd(HTMLToken & token){
+  return (token.GetType() == TAG_END && token.GetValue() == "script");    
 }
 
 bool HTMLParser::isHeaderStart(HTMLToken & token){

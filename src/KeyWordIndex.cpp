@@ -3,7 +3,7 @@
 using namespace std;
 
 //!  No-arg constructor.  Initializes an empty KeyWordIndex
-KeyWordIndex::KeyWordIndex(): size(0), root(0)
+KeyWordIndex::KeyWordIndex(): size(0), root(0), iterator(NULL), iteratorsize(0)
 {
   return;
 }
@@ -33,7 +33,9 @@ void KeyWordIndex::Free(KeyWordNode * p)
     delete p;
     p = NULL;
   }
-root = NULL;
+  root = NULL;
+  delete [] iterator;
+  iterator = NULL;
 }
 
 KeyWordNode * KeyWordIndex::ReCopy(KeyWordNode * p)
@@ -104,7 +106,6 @@ int KeyWordIndex::GetSize() const
 //!          in the tree (i.e., NULL is used to indicate a duplicate insertion)
 KeyWordNode * KeyWordIndex::Insert(const std::string & v, const std::string & s)
 {
-  
   KeyWordNode * newNode = new KeyWordNode(v);
   
   if(root == NULL){

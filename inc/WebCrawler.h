@@ -3,35 +3,46 @@
 #define WEBCRAWLER_H
 
 #include <string>
+#include <boost/regex.hpp>
+
 #include "StopWords.h"
+#include "Url.h"
+#include "PageHistory.h"
+#include "PageQueue.h"
+#include "KeyWordIndex.h"
+#include "StringUtil.h"
 
 using namespace std;
 
-/* PAGE Class
+/* Class
  * 
  * 
  * 
  *
  *
  */
-class page{
+class WebCrawler{
    private:
-      url StartUrl;
-      stopwords StopWords;
-//      PageHistory pageH;
-//test      PageQueue pageQ;
-
+      Url * starturl;
+      StopWords * stopwords;
+      string output;
+      PageHistory * history;
+      PageQueue * queue;
+      KeyWordIndex * index;
    public:
    	// Default Constructor
    	WebCrawler();
    	// Constructor using Command Line arguments
-   	WebCrawler(String url, String filestop);
+   	WebCrawler(string url, string filestop, string out);
    	// Destructor
    	~WebCrawler();
    	// Function containing main crawling algrithm
-   	CrawlWeb();
-
+   	void CrawlWeb();
+	
    private:
+	bool IsInScope(Url* s);
+	
+	bool IsHtml(Url* p);
 
 
 };

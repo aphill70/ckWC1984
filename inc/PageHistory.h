@@ -23,6 +23,10 @@ class PageHistoryNode {
 		{
 		}
 		
+		~PageHistoryNode(){
+		  delete value; 
+		  value = NULL;
+		}
 	
 		//!  Read-only public methods for use by clients of the PageHistory class
 		Page * GetValue() const

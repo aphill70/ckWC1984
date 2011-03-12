@@ -136,7 +136,7 @@ PageNode * PageQueue::GetLast()const
 //!      If n is NULL, the new node should be inserted at the beginning of the list.
 //!
 //!  @return a pointer to the newly inserted node
-PageNode * PageQueue::Insert(const std::string & v, PageNode * n)
+PageNode * PageQueue::Insert(Page * v, PageNode * n)
 {
   PageNode * p;
   
@@ -185,7 +185,7 @@ PageNode * PageQueue::Insert(const std::string & v, PageNode * n)
 //!      If n is NULL, the list should be searched from the beginning.
 //!
 //!  @return a pointer to the node containing v, or NULL if v is not found
-PageNode * PageQueue::Find(const std::string & v, PageNode * n) const
+PageNode * PageQueue::Find(Page * v, PageNode * n) const
 {
     PageNode * currentNode;
     
@@ -196,7 +196,7 @@ PageNode * PageQueue::Find(const std::string & v, PageNode * n) const
       
     while(currentNode != NULL)
     {
-      if(v.compare(currentNode->GetValue()) == 0)
+      if(v->getUrl()->getShortUrl() == n->GetValue()->getUrl()->getShortUrl())
 	return currentNode;
       
       currentNode = currentNode->next;
@@ -244,7 +244,7 @@ void PageQueue::Remove(PageNode * n)
     
   }
     
-    delete n;
-    n = NULL;
+   delete n;
+   n = NULL;
     size--;
 }

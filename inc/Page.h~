@@ -29,8 +29,11 @@ public:
    * 
    */
   Page();
- 
-  // takes a url object
+
+  /**
+   * 
+   * 
+   */
   Page(Url* site);
 
   /**
@@ -54,7 +57,7 @@ public:
    * 
    * 
    */
-  Url getUrl() const;
+  Url * getUrl() const;
 
   /**
    * 

@@ -120,6 +120,12 @@ private:
   void processBody(HTMLTokenizer & tokenizer);
   
   /**
+   * 
+   * 
+   */
+  void processScript(HTMLTokenizer & tokenizer);
+  
+  /**
    * Process Title
    * 
    * Processes all the tags and text between the title tags
@@ -149,6 +155,20 @@ private:
    * 
    */
   void processHeader(HTMLTokenizer & token);
+  
+  /**
+   * 
+   * 
+   * 
+   */
+  bool isScriptStart(HTMLToken & token);
+  
+  /**
+   * 
+   * 
+   * 
+   */
+  bool isScriptEnd(HTMLToken & token);
 
   /**
    * bool isWhiteSpace

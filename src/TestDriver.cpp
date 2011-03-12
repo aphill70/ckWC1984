@@ -8,8 +8,9 @@
 #include "Page.h"
 #include "HTMLParser.h"
 #include "OccurrenceSet.h"
-#include "Occurrence.h"
 #include "KeyWordIndex.h"
+#include "PageQueue.h"
+#include "PageHistory.h"
 
 void TestStopWords();
 bool TestStopWordsFind(StopWords* stopWords, string wordFile);
@@ -24,9 +25,6 @@ bool TestPageDownloaderUrl();
 void TestHTMLParser();
 bool TestHTMLParserConstructor();
 
-void TestOccurrence();
-bool TestOccurrenceCreation();
-
 void TestPage();
 bool TestPageCreator();
 
@@ -35,6 +33,12 @@ bool TestOccurrenceSetCreator();
 
 void TestKeyWordIndex();
 bool TestKeyWordIndexInput();
+
+void TestPageQueue();
+bool TestPageQueueCreation();
+
+void TestPageHistory();
+bool TestPageHistoryCreation();
 
 void PrintTestResults(bool results);
 void PrintErrorReport();
@@ -46,22 +50,101 @@ using namespace std;
 
 int main(int argc, char * argv[]){
     
-  TestStopWords();
+//   TestStopWords();
     
-  TestUrl();
+//   TestUrl();
   
-  TestPageDownloader();
+//   TestPageDownloader();
   
-  TestHTMLParser();
+//   TestHTMLParser();
   
-//   TestOccurrence();
+//   TestPage();
   
-  TestPage();
-  
-  TestOccurrenceSet();
+//   TestOccurrenceSet();
   
   TestKeyWordIndex();
+  
+//   TestPageQueue();
+  
+//   TestPageHistory();
 }
+
+void TestPageHistory(){
+  cout << delim << "## Testing PageHistory #" << delim << endl;
+
+  cout << "  PageHistory Creation. . . . . .";
+  
+  PrintTestResults(TestPageHistoryCreation());
+}
+
+bool TestPageHistoryCreation(){
+  
+  PageHistory * history = new PageHistory();
+  Url * url = new Url("http://www.cksuperman.com/test.html");
+  Page * page = new Page(url);
+  
+  history->Insert(page);
+  
+  Url * url4 = new Url("http://www.cksuperman.com/test.html");
+  Page * page2 = new Page(url4);
+  PageHistoryNode * node;
+  node = history->Insert(page2);
+  
+  if(node != NULL)
+    errors[errorcount++] = "Duplicate nodes were inserted";
+  
+  Url * url2 = new Url("http://www.cksuperman.com/test.html#test");
+  
+  Page * page3 = new Page(url2);
+  
+  PageHistoryNode * node2;
+  node2 = history->Insert(page3);
+  
+  if(node2 != NULL)
+    errors[errorcount++] = "Duplicate nodes were inserted";
+    
+  delete history;
+  
+  return (errorcount == 0);
+}
+
+
+void TestPageQueue(){
+  cout << delim << "### Testing PageQueue ##" << delim << endl;
+
+  cout << "  PageQueue Creation. . . . . . .";
+  
+  PrintTestResults(TestPageQueueCreation());
+}
+
+bool TestPageQueueCreation(){
+  
+  PageQueue * q = new PageQueue();
+  
+  Url * u = new Url("http://www.cksuperman.com/test.html");
+  Page * p = new Page(u);
+  q->Insert(p, NULL);
+  q->Insert(p, NULL);
+  
+  if(q->IsEmpty())
+    errors[errorcount++] = "The list should not be empty";
+  
+  cout << q->GetSize() << endl;
+  
+  while(!q->IsEmpty()){
+    cout << q->GetSize();
+    
+    q->Remove(q->GetFirst());
+  }
+  
+  delete q;
+  delete u;
+  delete p;
+  
+  
+  return (errorcount == 0);
+}
+
 
 void TestKeyWordIndex(){
   cout << delim << "# Testing KeyWordIndex #" << delim << endl;
@@ -148,6 +231,12 @@ bool TestOccurrenceSetCreator(){
   
   testset->Insert("http://www.google.com/test/me");
   
+  testset->IteratorInit();
+  
+  while(testset->HasNext()){
+    testset->Next()->getCount();
+  }
+  
   delete testset;
   return (errorcount == 0);
 }
@@ -169,7 +258,9 @@ bool TestPageCreator(){
   
   Page * testpg = new Page(testurl);
   
-/*  testpg->wordIteratorInit();
+  testpg->ExtractData();
+  
+  testpg->wordIteratorInit();
   
   while(testpg->wordIteratorHasNext()){
     cout << testpg->wordIteratorNext() << endl;
@@ -178,40 +269,9 @@ bool TestPageCreator(){
   testpg->linkIteratorInit();
   while(testpg->linkIteratorHasNext()){
     cout << testpg->linkIteratorNext() << endl;
-  }*/
-  
-  delete testpg;
-  delete testurl;
-  return (errorcount == 0);
-}
-
-void TestOccurrence(){
-  cout << delim << "## Testing Occurrence ##" << delim << endl;
-
-  cout << "  Occurrence Creation . . . . . .";
-  
-  PrintTestResults(TestOccurrenceCreation());
-}
-
-bool TestOccurrenceCreation(){
-  
-  string siteOcc[5] = {"http://www.google.com/"};
-  string siteVal[5] = {"test"};
-  int siteCnt[5] = {101};
-  
-  Occurrence * occ = new Occurrence(siteOcc[0], siteVal[0]);
-  for(int i = 0; i < 100; i++){
-    occ->incrementCount();
   }
   
-  if(occ->getCount() != siteCnt[0])
-    errors[errorcount] = "Occurrence Count does not match expected value";
-  
-  if(occ->getValue() != siteOcc[0])
-    errors[errorcount] = "Occurrence Value does not match expected value";
-  
-  delete occ;
-
+  delete testpg;
   return (errorcount == 0);
 }
 
@@ -289,18 +349,19 @@ bool TestUrlResolver(){
   Url * url = new Url("http://www.google.com/path/to/here");
   
   string resolverTest[5] = {"./././../test#gohere", 
-			    "../../test?gohere", 
-			    "./././../../meHere",
-			    "http://www.cksuperman.com/cs240Test.html#test"};
+			    "test?gohere", 
+			    "/meHere.html",
+			    "http://www.cksuperman.com/cs240Test.html"};
   
   string resolverAns[5] = {"http://www.google.com/path/test#gohere", 
-			    "http://www.google.com/test?gohere", 
-			    "http://www.google.com/meHere",
+			    "http://www.google.com/path/to/test?gohere", 
+			    "http://www.google.com/path/to/meHere.html",
 			    "http://www.cksuperman.com/cs240Test.html"};
 			    
   string resolverPath[5] = {"/path/test",
-			    "/test",
-			    "/meHere"};
+			    "/path/to/test",
+			    "/path/to/meHere.html",
+			    "/cs240Test.html"};
 
   Url * DownloadUrl = new Url(resolverTest[3]);
   
@@ -308,7 +369,7 @@ bool TestUrlResolver(){
   if(DownloadUrl->getShortUrl().compare(resolverAns[3]) != 0)
     errors[errorcount++] = "URL should have been " + resolverAns[3] + " was " + DownloadUrl->getShortUrl();
   
-  for(int i = 0; i < 3; i++){
+  for(int i = 0; i < 4; i++){
     Url* testUrl = url->resolveUrl(resolverTest[i]);
     
     if(testUrl->getUrl().compare(resolverAns[i]) != 0)
@@ -325,7 +386,7 @@ bool TestUrlResolver(){
 }
 
 bool TestUrlString(){
-  string urloptions[10] = {"http://www.google.com", 
+  string urloptions[10] = {"http://www.google.com/", 
 			   "http://www.google.com/", 
 			   "http://www.google.com/path/to/here#here", 
 			   "file:///path/to/here/is/this.php",

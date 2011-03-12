@@ -8,7 +8,15 @@ Page::Page():url(NULL), title(""), words(NULL), totalwords(0){
 
 Page::Page(Url * site){
   url = site;
+  title = "";
+  totalwords = 0;
+  totallinks = 0;
   
+  words = NULL;
+  links = NULL;
+}
+
+void Page::ExtractData(){
   HTMLParser parser;
   
   parser.runParser(url->getShortUrl());
@@ -31,11 +39,28 @@ Page::Page(Url * site){
   for(int i = 0; i < totallinks; i++){
     links[i] = tmplnks[i];
   }
+  
 }
 
 Page::~Page(){
   delete [] words;
+  words = NULL;
+  
   delete [] links;
+  links = NULL;
+  
+   delete url;
+   url = NULL;
+  
+  title.clear();
+}
+
+Url * Page::getUrl() const{
+  return url;
+}
+
+string Page::getTitle() const{
+  return title;
 }
 
 void Page::wordIteratorInit(){
@@ -47,9 +72,9 @@ bool Page::wordIteratorHasNext(){
 }
 
 string Page::wordIteratorNext(){
-  int tmpind = wordIteration;
+  string tmpstr(words[wordIteration]);
   wordIteration++;
-  return words[tmpind];
+  return tmpstr;
 }
 
 void Page::linkIteratorInit(){
@@ -61,7 +86,7 @@ bool Page::linkIteratorHasNext(){
 }
 
 string Page::linkIteratorNext(){
-   int tmpind = linkIteration;
+  string tmpstr(links[linkIteration]);
    linkIteration++;
-   return links[tmpind];
+   return tmpstr;
 }
