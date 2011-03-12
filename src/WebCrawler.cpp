@@ -51,6 +51,12 @@ void WebCrawler::CrawlWeb(){
       
       currentPage->ExtractData();
       
+      cout << currentPage->getUrl()->getShortUrl() << endl;
+      
+      if(currentPage->isBadPage()){
+	cout << "badPage" << endl;
+	continue;
+      }
       currentPage->wordIteratorInit();
       
       while(currentPage->wordIteratorHasNext()){
@@ -59,8 +65,6 @@ void WebCrawler::CrawlWeb(){
 	if(!stopwords->contains(currentWord))
 	  index->Insert(currentWord, currentPage->getUrl()->getShortUrl());
 	
-	cout << currentWord << endl;
-	  
       }
       
       currentPage->linkIteratorInit();
@@ -70,18 +74,27 @@ void WebCrawler::CrawlWeb(){
 	string tmplink = currentPage->linkIteratorNext();
 	
 	Url * tmrl = currentPage->getUrl()->resolveUrl(tmplink);
-	Page * tmpg = new Page(tmrl);
 	
-	if(history->Insert(tmpg) != NULL)
-	  queue->Insert(tmpg, NULL);
-	else
-	  delete tmpg;
-	
+	if(IsHtml(tmrl) && IsInScope(tmrl)){
+	  Page * tmpg = new Page(tmrl);
+	  
+	  if(history->Insert(tmpg) != NULL){
+	    queue->Insert(tmpg, NULL);	    
+	  }
+	}else
+	  delete tmrl;
       }
     }
   }
   
-  cout << index->Find("fibonacci")->GetSet()->GetRoot()->getCount() << endl;
+  ofstream xmlfile;
+  
+  xmlfile.open(output.c_str());
+  
+  PrintXml printer(index, history, output, starturl->getShortUrl());
+  
+  printer.PrintWebsite();
+  
 }
 
 bool WebCrawler::IsHtml(Url * p){
@@ -95,7 +108,7 @@ bool WebCrawler::IsHtml(Url * p){
 
   if(path.compare("/") == 0){
     return true;
-  }else if(path.find(".") == -1){
+  }else if(path.find(".") == (unsigned int)-1){
     return true;
   }else if(boost::regex_match(path, re)){
     return true;

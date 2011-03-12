@@ -11,6 +11,8 @@
 #include "PageQueue.h"
 #include "KeyWordIndex.h"
 #include "StringUtil.h"
+#include "PrintXml.h"
+
 
 using namespace std;
 

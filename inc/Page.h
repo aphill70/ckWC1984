@@ -22,6 +22,8 @@ class Page{
 
       int totalwords;
       int totallinks;
+      
+      bool failed;
 public:
 
   /**
@@ -41,7 +43,7 @@ public:
    * 
    */
   ~Page();
-
+  
   /**
    * 
    * 
@@ -99,6 +101,13 @@ public:
    * 
    */
   string linkIteratorNext();
+  
+  /**
+   * 
+   * 
+   */
+  bool isBadPage();
+
 private:
   int wordIteration;
   int linkIteration;

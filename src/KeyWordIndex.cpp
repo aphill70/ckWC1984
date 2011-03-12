@@ -114,14 +114,16 @@ KeyWordNode * KeyWordIndex::Insert(const std::string & v, const std::string & s)
     
   }
   else if(v.compare(root->value) < 0)
-    if(root->left == NULL)
+    if(root->left == NULL){
       root->left = newNode;
-    else
+      root->left->set->Insert(s);
+    }else
       return ReInsert(v, root->left, newNode, s);
   else if(v.compare(root->value) > 0)
-    if(root->right == NULL)
+    if(root->right == NULL){
       root->right = newNode;
-    else
+      root->right->set->Insert(s);
+    }else
       return ReInsert(v, root->right, newNode, s);
   else
   {
@@ -138,15 +140,17 @@ KeyWordNode * KeyWordIndex::ReInsert(const std::string & v, KeyWordNode * p, Key
 {
   
   if(v.compare(p->value) < 0)
-    if(p->left == NULL)
+    if(p->left == NULL){
       p->left = nn;
-    else
+      p->left->set->Insert(s);
+    }else
     return ReInsert(v, p->left, nn, s);
   else if(v.compare(p->value) > 0)
   {
-    if(p->right == NULL)
+    if(p->right == NULL){
       p->right = nn;
-    else
+      p->right->set->Insert(s);
+    }else
       return ReInsert(v, p->right, nn, s);
   }
     else

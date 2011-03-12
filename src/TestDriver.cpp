@@ -52,17 +52,17 @@ int main(int argc, char * argv[]){
     
 //   TestStopWords();
     
-//   TestUrl();
+  TestUrl();
   
 //   TestPageDownloader();
   
 //   TestHTMLParser();
   
-//   TestPage();
+//    TestPage();
   
 //   TestOccurrenceSet();
   
-  TestKeyWordIndex();
+//   TestKeyWordIndex();
   
 //   TestPageQueue();
   
@@ -254,7 +254,7 @@ void TestPage(){
 bool TestPageCreator(){
   string testPage[5] = {"http://students.cs.byu.edu/~cs240ta/winter2011/projects/crawler/", "http://www.cksuperman.com/test.html", "file:///home/chris/cs240/test/inputFile.html"};
   
-  Url * testurl = new Url(testPage[0]);
+  Url * testurl = new Url(testPage[1]);
   
   Page * testpg = new Page(testurl);
   
@@ -346,21 +346,21 @@ void TestUrl(){
 }
 
 bool TestUrlResolver(){
-  Url * url = new Url("http://www.google.com/path/to/here");
+  Url * url = new Url("http://www.google.com/path/to/here/");
   
   string resolverTest[5] = {"./././../test#gohere", 
 			    "test?gohere", 
 			    "/meHere.html",
 			    "http://www.cksuperman.com/cs240Test.html"};
   
-  string resolverAns[5] = {"http://www.google.com/path/test#gohere", 
-			    "http://www.google.com/path/to/test?gohere", 
-			    "http://www.google.com/path/to/meHere.html",
+  string resolverAns[5] = {"http://www.google.com/path/to/test#gohere", 
+			    "http://www.google.com/path/to/here/test?gohere", 
+			    "http://www.google.com/meHere.html",
 			    "http://www.cksuperman.com/cs240Test.html"};
 			    
-  string resolverPath[5] = {"/path/test",
-			    "/path/to/test",
-			    "/path/to/meHere.html",
+  string resolverPath[5] = {"/path/to/test",
+			    "/path/to/here/test",
+			    "/meHere.html",
 			    "/cs240Test.html"};
 
   Url * DownloadUrl = new Url(resolverTest[3]);

@@ -92,53 +92,51 @@ string Url::getFragment(){
 
 Url* Url::resolveUrl(string relUrl){
   
-  if(relUrl.find("http://") != -1 || relUrl.find("file://") != -1){
+  string lowrelUrl = relUrl;
+  StringUtil::ToLower(lowrelUrl);
+  
+  if(lowrelUrl.find("http://") != (unsigned int)-1 || lowrelUrl.find("file://") != (unsigned int)-1){
     return new Url(relUrl);
   }
   
+  string tmpurl = path;
+  
+  string output;
+  
+  tmpurl = tmpurl.substr(0, tmpurl.rfind('/'));
+  
   string::iterator it;
+  
   it = relUrl.begin();
   
-  string tempurl(path);
-  bool firstPass = false;
-
-  if(tempurl.size() - tempurl.rfind('/') != 1)
-    tempurl.erase(tempurl.rfind('/'));
-
-  
   while(it != relUrl.end()){
-    string temprelUrl(relUrl);
-  
+    
     if(isalnum(*it)){
-      tempurl += "/";
+      
+      if(output.empty())
+	output = '/';
       while(it != relUrl.end()){
-	tempurl += *it;
+	output += *it;
 	it++;
       }
-      return new Url(scheme + location + tempurl);
-    }
-  
-
-    if(*it == '.'){
+      return new Url(scheme + location + tmpurl + output);
+    }else if(*it == '/'){
+      while(it != relUrl.end()){
+	output += *it;
+	it++;
+      }
+      return new Url(scheme + location + output);
+    }else if(*it == '.'){
       it++;
       if(*it == '.'){
-	it = it +2;
-	tempurl.erase(tempurl.rfind('/'));
-	  
-      }else{
 	it++;
-	temprelUrl.erase(temprelUrl.find('/'));
-	continue;
+	tmpurl = tmpurl.substr(0, tmpurl.rfind('/'));
       }
-    }else if(*it == '/'){
-      it++;
-    }else{
-      if(!firstPass)
-	tempurl.append("/");
-      firstPass = true;
-      tempurl += *it;
-      it++;
     }
+    it++;
   }
-  return new Url(scheme + location + tempurl);
+  
+  
+  
+  return new Url(scheme + location + output);
 }

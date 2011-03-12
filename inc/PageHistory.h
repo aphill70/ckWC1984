@@ -133,6 +133,13 @@ class PageHistory {
 		//!  @return true if v was removed from the tree, or false if v was not in the tree
 		//bool Remove(Page * v);
 	
+	  void IteratorInit();
+
+	  void TreeTraversal(PageHistoryNode* p, Page* container[]);
+
+	  bool HasNext();
+
+	  Page* Next();
 	private:
 	  PageHistoryNode * ReInsert(Page * v, PageHistoryNode * p, PageHistoryNode * nn);
 	  void Free(PageHistoryNode * p);
@@ -140,6 +147,11 @@ class PageHistory {
 
 	  int size;
 	  PageHistoryNode * root;
+	  
+	  int iteratorsize;
+	  Page ** iterator;
+	  
+
 };
 
 

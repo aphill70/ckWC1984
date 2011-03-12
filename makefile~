@@ -2,7 +2,8 @@ EXE=
 LIBSRC=utils/obj
 
 memBin : bin/WebCrawl
-	valgrind --tool=memcheck --leak-check=yes --max-stackframe=5000000 --show-reachable=yes --suppressions=test/config/string.supp  bin/WebCrawl
+	valgrind --tool=memcheck --leak-check=yes --max-stackframe=5000000 --show-reachable=yes --suppressions=test/config/string.supp  bin/WebCrawl http://www.cksuperman.com/test.html test/output/output.txt ./test/input/stopword.txt
+
 
 bin : bin/WebCrawl
 

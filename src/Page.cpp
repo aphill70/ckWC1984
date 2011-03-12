@@ -14,6 +14,8 @@ Page::Page(Url * site){
   
   words = NULL;
   links = NULL;
+  
+  failed = false;
 }
 
 void Page::ExtractData(){
@@ -23,23 +25,26 @@ void Page::ExtractData(){
   
   title = parser.getDescription();
   
+  failed = parser.isFailedDownload();
+  
   totalwords = parser.getWordCount();
   totallinks = parser.getLinkCount();
   
   words = new string[totalwords];
   links = new string[totallinks];
-  
-  string * tmpwrds = parser.getWords();
-  string * tmplnks = parser.getLinks();
-  
-  for(int i = 0; i < totalwords; i++){
-    words[i] = tmpwrds[i];
+
+  if(words != 0){
+    string * tmpwrds = parser.getWords();
+    string * tmplnks = parser.getLinks();
+    
+    for(int i = 0; i < totalwords; i++){
+      words[i] = tmpwrds[i];
+    }
+    
+    for(int i = 0; i < totallinks; i++){
+      links[i] = tmplnks[i];
+    }
   }
-  
-  for(int i = 0; i < totallinks; i++){
-    links[i] = tmplnks[i];
-  }
-  
 }
 
 Page::~Page(){
@@ -89,4 +94,8 @@ string Page::linkIteratorNext(){
   string tmpstr(links[linkIteration]);
    linkIteration++;
    return tmpstr;
+}
+
+bool Page::isBadPage(){
+  return failed;
 }

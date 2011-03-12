@@ -17,13 +17,16 @@ HTMLParser::HTMLParser(){
   
   wordcount = 0;
   linkcount = 0;
+  
+  fail = false;
+  
   return;
 }
   
 HTMLParser::~HTMLParser(){
   
-    if(inputStream->IsOpen())
-      inputStream->Close();
+/*    if(inputStream->IsOpen())
+      inputStream->Close();*/
   
     delete inputStream;
     inputStream = NULL;    
@@ -80,6 +83,8 @@ void HTMLParser::runParser(string url){
     }
 
   delete tokenizer;
+  
+  inputStream->Close();
   
   }
   catch (std::exception &e){
@@ -151,7 +156,6 @@ void HTMLParser::processTitle(HTMLTokenizer & tokenizer){
   assert(tokenizer.HasNextToken());
   while(tokenizer.HasNextToken()){
     HTMLToken titleToken = tokenizer.GetNextToken();
-    
     if(titleToken.GetType() == TEXT){
       title += titleToken.GetValue();
       processText(titleToken.GetValue());
@@ -305,6 +309,10 @@ bool HTMLParser::isWhiteSpace(string token){
     return true;
   else
     return false;  
+}
+
+bool HTMLParser::isFailedDownload(){
+  return fail;
 }
 
 void HTMLParser::growArray(){

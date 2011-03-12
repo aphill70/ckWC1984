@@ -38,6 +38,8 @@ private:
   int linkcount;
   int arraysize;
   int wordcount;
+  
+  bool fail;
 
 public:
   /**
@@ -51,6 +53,8 @@ public:
    * 
    */
   ~HTMLParser();
+  
+  bool isFailedDownload();
   
   /**
    * 

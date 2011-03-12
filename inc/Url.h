@@ -4,6 +4,7 @@
 #include <string>
 
 #include <boost/regex.hpp>
+#include "StringUtil.h"
 using namespace std;
 
 /* URL Class

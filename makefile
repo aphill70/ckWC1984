@@ -19,7 +19,7 @@ clean :
 	@- rm -f utils/obj/*.o > /dev/null 2>&1
 	@- rm -f bin/* > /dev/null 2>&1
 
-bin/WebCrawl : obj/MainDriver.o lib/libutils.a obj/Url.o obj/WebCrawler.o obj/PageQueue.o obj/PageHistory.o obj/KeyWordIndex.o
+bin/WebCrawl : obj/MainDriver.o lib/libutils.a obj/Url.o obj/WebCrawler.o obj/PageQueue.o obj/PageHistory.o obj/KeyWordIndex.o obj/PrintXml.o
 	g++ -o bin/WebCrawl obj/*.o lib/libutils.a -lboost_regex
 
 bin/TestDriver : obj/TestDriver.o lib/libutils.a obj/StopWords.o obj/Url.o obj/PageDownloader.o obj/HTMLParser.o obj/Occurrence.o obj/Page.o obj/OccurrenceSet.o obj/PageQueue.o obj/KeyWordIndex.o obj/PageHistory.o
@@ -64,6 +64,8 @@ obj/KeyWordIndex.o : src/KeyWordIndex.cpp inc/KeyWordIndex.h obj/OccurrenceSet.o
 obj/PageHistory.o : src/PageHistory.cpp inc/PageHistory.h obj/Page.o
 	g++ -c -g -Wall -o obj/PageHistory.o -I inc/ -I utils/inc src/PageHistory.cpp
 
+obj/PrintXml.o : src/PrintXml.cpp inc/PrintXml.h obj/Page.o obj/KeyWordIndex.o obj/OccurrenceSet.o obj/Url.o
+	g++ -c -g -Wall -o obj/PrintXml.o -I inc/ -I utils/inc src/PrintXml.cpp
 # library
 #
 

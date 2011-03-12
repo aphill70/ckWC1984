@@ -1,5 +1,4 @@
 #include "PageHistory.h"
-#include <iostream>
 using namespace std;
 
 //!  No-arg constructor.  Initializes an empty PageHistory
@@ -114,7 +113,7 @@ PageHistoryNode * PageHistory::Insert(Page * v)
       root->left = newNode;
     else
       return ReInsert(v, root->left, newNode);
-  else if(v->getUrl()->getShortUrl().compare(root->value->getUrl()->getShortUrl()) > 0)
+  else if(v->getUrl()->getShortUrl().compare(root->value->getUrl()->getShortUrl()) > 0)	  	  
     if(root->right == NULL)
       root->right = newNode;
     else
@@ -186,3 +185,31 @@ PageHistoryNode * PageHistory::Find(Page * v) const
 //!
 //!  @return true if v was removed from the tree, or false if v was not in the tree
 //bool Remove(const std::string & v);
+
+void PageHistory::IteratorInit(){
+  iteratorsize = 0;
+  iterator = new Page*[size];
+  
+  if(root != NULL)
+  TreeTraversal(root, iterator);
+  
+  iteratorsize = 0;
+  
+}
+
+void PageHistory::TreeTraversal(PageHistoryNode* p, Page * container[]){
+  if(p->left != 0)
+    TreeTraversal(p->left, container);
+  
+    container[iteratorsize++] = p->value;
+  if(p->right != 0)
+    TreeTraversal(p->right, container);
+}
+
+bool PageHistory::HasNext(){
+  return (iteratorsize < size);
+}
+
+Page * PageHistory::Next(){
+  return iterator[iteratorsize++];
+}
