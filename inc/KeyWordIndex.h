@@ -141,16 +141,48 @@ class KeyWordIndex {
 		//!  @return true if v was removed from the tree, or false if v was not in the tree
 		//bool Remove(const std::string & v);
 		
+		/**
+		 * Initializes the Iterator
+		 * 
+		 * must be called before any other
+		 * iterator can be used
+		 */
 		void KeyWordIteratorInit();
 		
+		/**
+		 * HasNext
+		 * 
+		 * @return true if the iterator as more words
+		 */
 		bool KeyWordIteratorHasNext();
 		
+		/**
+		 * Next
+		 * 
+		 * @return the next KeyWordNode *
+		 */
 		KeyWordNode * KeyWordIteratorNext();
 	
 	private:
+	  /**
+	   * Prepares the iterator loads nodes up in
+	   * inorder traversal
+	   */
 	  void TreeTraversal(KeyWordNode* p, KeyWordNode* container[]);
+	  
+	  /**
+	   * Recursive Insert for the tree
+	   */
 	  KeyWordNode * ReInsert(const std::string& v, KeyWordNode* p, KeyWordNode* nn, const std::string s);
+	  
+	  /**
+	   * Recursive delete or deleting the object
+	   */
 	  void Free(KeyWordNode * p);
+	  
+	  /**
+	   * Copy the tree recursively
+	   */
 	  KeyWordNode * ReCopy(KeyWordNode * p);
 
 	  int size;

@@ -25,11 +25,40 @@ private:
   PageHistory * pghistory;
   std::string startUrl;
   
+  /**
+   * 
+   * 
+   */
   void PrintKeyWordIndex();
+
+  /**
+   * 
+   * 
+   */
   void PrintStartUrl();
+  
+  /**
+   * 
+   * 
+   */
   void PrintPageHistory();
+
+  /**
+   * 
+   * 
+   */
   void PrintPage();
+
+  /**
+   * 
+   * 
+   */
   void PrintKeyWord();
+
+  /**
+   * 
+   * 
+   */
   void PrintOccurrenceSet(OccurrenceSet* set);
 
   

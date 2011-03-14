@@ -40,41 +40,45 @@ private:
   int wordcount;
   
   bool fail;
-
 public:
   /**
    * Default Constructor
    * 
+   * Initializes the parser with NULL values
    */
   HTMLParser();
   
   /**
    * Destructor
    * 
+   * Deletes and frees memory
    */
   ~HTMLParser();
   
   bool isFailedDownload();
   
   /**
+   * getWords
    * 
-   * 
-   * 
+   * @return pointer to the word array
    */
   string * getWords();
   
   /**
+   * getLinks
    * 
-   * 
-   * 
+   * @return pointer to the link array
    */
   string * getLinks();
   
   /**
    * Parse the Page
    * 
-   * @parameter url - path to the page to be parsed
+   * creates the UrlInputStream and feeds 
+   * the stream into a parser that processes the text
+   * links headers and title
    * 
+   * @parameter url - path to the page to be parsed
    */
   void runParser(string url);
   
@@ -93,8 +97,9 @@ public:
   int getWordCount();
   
   /**
+   * getDescription
    * 
-   * 
+   * @return the correct description for the page
    */
   string getDescription();
   
@@ -118,14 +123,20 @@ private:
   void processHead(HTMLTokenizer & tokenizer);
   
   /**
+   * processBody
    * 
-   * 
+   * @parameter takes an already instantiated tokenizer
+   * where the current token is the start body tags then 
+   * processes the text and tags within the body
    */
   void processBody(HTMLTokenizer & tokenizer);
   
   /**
+   * processScript
    * 
-   * 
+   * processes script tags discarding all text and
+   * other content, returns when the end tag is 
+   * discovered
    */
   void processScript(HTMLTokenizer & tokenizer);
   
@@ -154,23 +165,25 @@ private:
   void processLink(HTMLToken & token);
   
   /**
+   * processHeader
    * 
-   * 
-   * 
+   * handles h[1-9] tags text processing
+   * receives the tokenizer with current token
+   * is the header start tag
    */
   void processHeader(HTMLTokenizer & token);
   
   /**
+   * isScriptStart
    * 
-   * 
-   * 
+   * @return true if token is a script start tag
    */
   bool isScriptStart(HTMLToken & token);
   
   /**
+   * isScriptEnd
    * 
-   * 
-   * 
+   * @return true if token is a script end tag </script>
    */
   bool isScriptEnd(HTMLToken & token);
 
@@ -194,22 +207,19 @@ private:
   bool isHeadStart(HTMLToken & token);
   
   /**
+   * isHeadEnd
    * 
+   * Tests if the passed in token is the closing head tag
    * 
-   * 
+   * @parameter token - an HTMLToken object to be tested
+   * @return bool - true if tag is </head> else false
    */
   bool isHeadEnd(HTMLToken & token);
- 
+   
   /**
+   * isBodyStart
    * 
-   * 
-   * 
-   */
-  bool headToken(HTMLToken & token);
-  /**
-   * 
-   * 
-   * 
+   * @return true if the token is a <body> tag
    */
   bool isBodyStart(HTMLToken & token);
   
@@ -234,9 +244,12 @@ private:
   bool isTitleStart(HTMLToken & token);
   
   /**
+   * isTitleEnd
    * 
+   * tests if the passed in token is the closing tag of the title
    * 
-   * 
+   * @parameter token - HTMLToken Object to be tested
+   * @return bool true if tag is </title> else false
    */
   bool isTitleEnd(HTMLToken & token);
   
@@ -258,15 +271,11 @@ private:
   
   /**
    * Tests for a header tag i.e. <h1> <h2>...
-   * 
    */
   bool isHeaderStart(HTMLToken & token);
   
   /**
-   * 
-   * 
-   * 
-   * 
+   * Tests for closing header tag i.e. </h1> </h2>...
    */
   bool isHeaderEnd(HTMLToken & token);
   
@@ -297,15 +306,16 @@ private:
   void growLinkArray();
   
   /**
+   * processDescription
    * 
-   * 
+   * Wrapper for description Processer
    */
   void processDescription(string text);
   
   /**
+   * DescriptionProcesser
    * 
-   * 
-   * 
+   * Procsses the first 100 characters for the description
    */
   void descriptionProcesser(string text);
 };

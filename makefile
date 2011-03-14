@@ -22,7 +22,7 @@ clean :
 bin/WebCrawl : obj/MainDriver.o lib/libutils.a obj/Url.o obj/WebCrawler.o obj/PageQueue.o obj/PageHistory.o obj/KeyWordIndex.o obj/PrintXml.o
 	g++ -o bin/WebCrawl obj/*.o lib/libutils.a -lboost_regex
 
-bin/TestDriver : obj/TestDriver.o lib/libutils.a obj/StopWords.o obj/Url.o obj/PageDownloader.o obj/HTMLParser.o obj/Occurrence.o obj/Page.o obj/OccurrenceSet.o obj/PageQueue.o obj/KeyWordIndex.o obj/PageHistory.o
+bin/TestDriver : obj/TestDriver.o lib/libutils.a obj/StopWords.o obj/Url.o obj/HTMLParser.o obj/Page.o obj/OccurrenceSet.o obj/PageQueue.o obj/KeyWordIndex.o obj/PageHistory.o
 	g++ -g -o bin/TestDriver obj/*.o lib/libutils.a -lboost_regex
 
 obj/MainDriver.o : src/MainDriver.cpp
@@ -40,14 +40,8 @@ obj/StopWords.o : src/StopWords.cpp inc/StopWords.h
 obj/Url.o : src/Url.cpp inc/Url.h
 	g++ -c -g -Wall -o obj/Url.o -I inc/ -I utils/inc src/Url.cpp
 
-obj/PageDownloader.o : src/PageDownloader.cpp inc/PageDownloader.h
-	g++ -c -g -Wall -o obj/PageDownloader.o -I inc/ -I utils/inc src/PageDownloader.cpp
-
 obj/HTMLParser.o : src/HTMLParser.cpp inc/HTMLParser.h
 	g++ -c -g -Wall -o obj/HTMLParser.o -I inc/ -I utils/inc src/HTMLParser.cpp
-
-obj/Occurrence.o : src/Occurrence.cpp inc/Occurrence.h
-	g++ -c -g -Wall -o obj/Occurrence.o -I inc/ -I utils/inc src/Occurrence.cpp
 
 obj/Page.o : src/Page.cpp inc/Page.h obj/HTMLParser.o obj/Url.o
 	g++ -c -g -Wall -o obj/Page.o -I inc/ -I utils/inc src/Page.cpp

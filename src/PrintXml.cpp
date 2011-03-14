@@ -79,9 +79,10 @@ void PrintXml::PrintKeyWord(){
     StringUtil::EncodeToXml(value);
     
       file << "\t\t<word>\n";
-	file << "\t\t\t<value>" << value << "<value>\n";
+	file << "\t\t\t<value>" << value << "</value>\n";
       
 	PrintOccurrenceSet(curnode->GetSet());
+      file << "\t\t</word>\n";
   }
 }
 

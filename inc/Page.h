@@ -27,31 +27,33 @@ class Page{
 public:
 
   /**
-   * 
+   * Default Constuctor
    * 
    */
   Page();
 
   /**
-   * 
+   * Constuctor
    * 
    */
   Page(Url* site);
 
   /**
-   * 
+   * Destuctor
    * 
    */
   ~Page();
   
   /**
-   * 
+   * GetTitle
    * 
    */
   string getTitle() const;
 
   /**
+   * ParsePage
    * 
+   * Runs the parser
    */
   void parsePage();
   
@@ -62,49 +64,48 @@ public:
   void ExtractData();
 
   /**
-   * 
+   * Get URL
    * 
    */
   Url * getUrl() const;
 
   /**
-   * 
+   * Initializes the Word Iterator
    * 
    */
   void wordIteratorInit();
   
   /**
-   * 
+   * Has Next
    * 
    */
   bool wordIteratorHasNext();
 
   /**
-   * 
+   * Next
    * 
    */
   string wordIteratorNext();
   
   /**
-   * 
+   * Initializes the Link Iterator
    */
   void linkIteratorInit();
    
   /**
-   * 
-   * 
+   * HasNext
    */
   bool linkIteratorHasNext();
   
   /**
-   * 
-   * 
+   * Next
    */
   string linkIteratorNext();
   
   /**
    * 
-   * 
+   * @return true if the page is bad threw an
+   * exception when downloading
    */
   bool isBadPage();
 
