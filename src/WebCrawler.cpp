@@ -50,11 +50,11 @@ void WebCrawler::CrawlWeb(){
       queue->Remove(queue->GetFirst());
       
       currentPage->ExtractData();
-      
-      cout << currentPage->getUrl()->getShortUrl() << endl;
+
+//       cout << currentPage->getUrl()->getShortUrl() << endl;
       
       if(currentPage->isBadPage()){
-	cout << "badPage" << endl;
+// 	cout << "badPage" << endl;
 	continue;
       }
       currentPage->wordIteratorInit();
