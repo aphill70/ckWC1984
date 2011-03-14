@@ -2,22 +2,19 @@
 using namespace std;
 
 //!  No-arg constructor.  Initializes an empty OccurrenceSet
-OccurrenceSet::OccurrenceSet():value(""), size(0), root(0), iterator(NULL), iteratorsize(0)
-{
+OccurrenceSet::OccurrenceSet():value(""), size(0), root(0), iterator(NULL), iteratorsize(0){
   return;
 }
 
 
 //!  Copy constructor.  Makes a complete copy of its argument
-OccurrenceSet::OccurrenceSet(const OccurrenceSet & other)
-{
+OccurrenceSet::OccurrenceSet(const OccurrenceSet & other){
   root = ReCopy(other.root);
   size = other.size;
 }
 
 //!  Destructor
-OccurrenceSet::~OccurrenceSet()
-{
+OccurrenceSet::~OccurrenceSet(){
   Free(root);
 }
 
@@ -25,8 +22,7 @@ void OccurrenceSet::setValue(std::string word){
   value = word;
 }
 
-void OccurrenceSet::Free(OccurrenceNode * p)
-{
+void OccurrenceSet::Free(OccurrenceNode * p){
   size = 0;
   if(p != NULL){
     Free(p->left);
@@ -40,28 +36,24 @@ void OccurrenceSet::Free(OccurrenceNode * p)
   iterator = NULL;
 }
 
-OccurrenceNode * OccurrenceSet::ReCopy(OccurrenceNode * p)
-{ 
+OccurrenceNode * OccurrenceSet::ReCopy(OccurrenceNode * p){
   OccurrenceNode * np;
   
   if(p == NULL)
     return NULL;
-  else
-  {
+  else{
     np = new OccurrenceNode(p->value);
     np->left = ReCopy(p->left);
     np->right = ReCopy(p->right);
     
     return np;    
   }
-  
 }
 
 
 //!  Assignment operator.  Makes a complete copy of its argument
 //!  @return Reference to oneself
-OccurrenceSet& OccurrenceSet::operator =(const OccurrenceSet & other)
-{
+OccurrenceSet& OccurrenceSet::operator =(const OccurrenceSet & other){
     if (this != &other) {
          Free(root);
          root = ReCopy(other.root);
@@ -73,29 +65,25 @@ OccurrenceSet& OccurrenceSet::operator =(const OccurrenceSet & other)
 
 //!  @return a pointer to the root node of the tree, or NULL if the tree is empty.
 //!  @note This is useful for OccurrenceSet clients that need to traverse the tree.)
-OccurrenceNode * OccurrenceSet::GetRoot()const
-{
+OccurrenceNode * OccurrenceSet::GetRoot()const{
   return root;
 }
 
 
 //!  @return true if the OccurrenceSet is empty, or false if the OccurrenceSet is not empty
-bool OccurrenceSet::IsEmpty() const
-{
+bool OccurrenceSet::IsEmpty() const{
   return (size == 0);
 }
 
 
 //!  Removes all values from the OccurrenceSet
-void OccurrenceSet::Clear()
-{
+void OccurrenceSet::Clear(){
   Free(root);
 }
 
 
 //!  @return the number of values in the OccurrenceSet
-int OccurrenceSet::GetSize() const
-{
+int OccurrenceSet::GetSize() const{
   return size;
 }
 
@@ -106,8 +94,7 @@ int OccurrenceSet::GetSize() const
 //!
 //!  @return a pointer to the newly inserted node, or NULL if v was already
 //!          in the tree (i.e., NULL is used to indicate a duplicate insertion)
-OccurrenceNode * OccurrenceSet::Insert(const std::string & v)
-{
+OccurrenceNode * OccurrenceSet::Insert(const std::string & v){
   
   OccurrenceNode * newNode = new OccurrenceNode(v);
   
@@ -123,8 +110,7 @@ OccurrenceNode * OccurrenceSet::Insert(const std::string & v)
       root->right = newNode;
     else
       return ReInsert(v, root->right, newNode);
-  else
-  {
+  else{
     root->count++;
     delete newNode;
     newNode = NULL;
@@ -134,23 +120,21 @@ OccurrenceNode * OccurrenceSet::Insert(const std::string & v)
   return newNode;
 }
 
-OccurrenceNode * OccurrenceSet::ReInsert(const std::string & v, OccurrenceNode * p, OccurrenceNode * nn)
-{
+OccurrenceNode * OccurrenceSet::ReInsert(const std::string & v, 
+					 OccurrenceNode * p, 
+					 OccurrenceNode * nn){
   
   if(v.compare(p->value) < 0)
     if(p->left == NULL)
       p->left = nn;
     else
     return ReInsert(v, p->left, nn);
-  else if(v.compare(p->value) > 0)
-  {
+  else if(v.compare(p->value) > 0){
     if(p->right == NULL)
       p->right = nn;
     else
       return ReInsert(v, p->right, nn);
-  }
-    else
-    {
+  }else{
       p->count++;
       delete nn;
       nn = NULL;
@@ -165,12 +149,10 @@ OccurrenceNode * OccurrenceSet::ReInsert(const std::string & v, OccurrenceNode *
 //!  @param v The new value being searched for
 //!
 //!  @return a pointer to the node containing v, or NULL if v is not in the tree
-OccurrenceNode * OccurrenceSet::Find(const std::string & v) const
-{
+OccurrenceNode * OccurrenceSet::Find(const std::string & v) const{
   OccurrenceNode * p = root;
   
-  while(p != NULL)
-  {
+  while(p != NULL){
     if(p->GetValue().compare(v) > 0)
       p = p->left;
     else if(p->GetValue().compare(v) < 0)

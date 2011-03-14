@@ -3,37 +3,30 @@
 using namespace std;
 
 //!  No-arg constructor.  Initializes an empty linked list
-PageQueue::PageQueue(): first(0), last(0), size(0)
-{
+PageQueue::PageQueue(): first(0), last(0), size(0){
   return;
 }
 
 
 //!  Copy constructor.  Makes a complete copy of its argument
-PageQueue::PageQueue(const PageQueue & other)
-{  
+PageQueue::PageQueue(const PageQueue & other){
   Init(other);
 }
 
-void PageQueue::Init(const PageQueue & other)
-{
-  if(other.first == NULL) 
-  {
+void PageQueue::Init(const PageQueue & other){
+  if(other.first == NULL){
     first = last = NULL;
     size = 0;
     return;
   }
   
-  
   PageNode * CopyNode = other.first;
   
   PageNode * MyPrevNode = 0;
   PageNode * MyCopyNode;
-  while(CopyNode != NULL)
-  {
+  while(CopyNode != NULL){
     
-    if(MyPrevNode == 0)
-    {
+    if(MyPrevNode == 0){
       MyCopyNode = new PageNode(CopyNode->GetValue(), CopyNode->prev, CopyNode->next);
       first = MyCopyNode;
     }
@@ -53,13 +46,11 @@ void PageQueue::Init(const PageQueue & other)
   size = other.size;
 }
 
-void PageQueue::Free() 
-{
+void PageQueue::Free(){
   PageNode * n = first;
   PageNode * t;
   
-  while(n != 0)
-  {
+  while(n != 0){
     if(n->next != 0)
       t = n->next;
     else
@@ -93,37 +84,32 @@ PageQueue& PageQueue::operator =(const PageQueue & other){
 
 
 //!  @return true if the list is empty, or false if the list is not empty
-bool PageQueue::IsEmpty() const
-{
+bool PageQueue::IsEmpty() const{
   return (size == 0);
 }
 
 //!  Removes all values from the list
-void PageQueue::Clear()
-{
+void PageQueue::Clear(){
   Free();
 }
 
 
 //!  @return the number of values in the list
-int PageQueue::GetSize() const
-{
+int PageQueue::GetSize() const{
   return size;
 }
 
 
 
 //!  @return a pointer to the first node in the list, or NULL if the list is empty
-PageNode * PageQueue::GetFirst()const
-{
+PageNode * PageQueue::GetFirst()const{
   return first;
 }
 
 
 
 //!  @returns a pointer to the last node in the list, or NULL if the list is empty
-PageNode * PageQueue::GetLast()const
-{
+PageNode * PageQueue::GetLast()const{
   return last;
 }
 
@@ -136,44 +122,37 @@ PageNode * PageQueue::GetLast()const
 //!      If n is NULL, the new node should be inserted at the beginning of the list.
 //!
 //!  @return a pointer to the newly inserted node
-PageNode * PageQueue::Insert(Page * v, PageNode * n)
-{
+PageNode * PageQueue::Insert(Page * v, PageNode * n){
   PageNode * p;
   
-    if(first == NULL)
-    {
+    if(first == NULL){
 	first = new PageNode(v, 0, 0);
 	last = first;
 	size++;
 	return first;
-    }else if(n == NULL)
-    {
+    }else if(n == NULL){
      p = first;
      
      first = new PageNode(v, 0, p);
      p->prev = first;
      size++;
      return first;
-    }else if(n == last)
-    {
+    }else if(n == last){
       PageNode * nn = new PageNode(v, n, n->next);
       last->next = nn;
       last = nn;
       size++;
       return nn;
-    }else
-    {
-
-    PageNode * nn = new PageNode(v, n, n->next);
+    }else{
+      PageNode * nn = new PageNode(v, n, n->next);
    
-    if(n->next != NULL)
-      n->next->prev = nn;
-    n->next = nn;
-    
-    size++;
-    return nn;
+      if(n->next != NULL)
+	n->next->prev = nn;
+      n->next = nn;
+      
+      size++;
+      return nn;
     }
-  
 }
 
 
@@ -185,8 +164,7 @@ PageNode * PageQueue::Insert(Page * v, PageNode * n)
 //!      If n is NULL, the list should be searched from the beginning.
 //!
 //!  @return a pointer to the node containing v, or NULL if v is not found
-PageNode * PageQueue::Find(Page * v, PageNode * n) const
-{
+PageNode * PageQueue::Find(Page * v, PageNode * n) const{
     PageNode * currentNode;
     
     if(n == NULL)
@@ -194,8 +172,7 @@ PageNode * PageQueue::Find(Page * v, PageNode * n) const
     else
       currentNode = n->next;
       
-    while(currentNode != NULL)
-    {
+    while(currentNode != NULL){
       if(v->getUrl()->getShortUrl() == n->GetValue()->getUrl()->getShortUrl())
 	return currentNode;
       
@@ -204,47 +181,42 @@ PageNode * PageQueue::Find(Page * v, PageNode * n) const
     return currentNode;    
 }
 
-
 //!  Removes node n from the list
 //!
 //!  @param n The node being removed from the list
-void PageQueue::Remove(PageNode * n)
-{
+void PageQueue::Remove(PageNode * n){
   PageNode * next;
   PageNode * prev;
   
   if(n == NULL)
     return;
   
-  if(size == 1)
-  {
+  if(size == 1){
     last = 0;
     first = 0;
-  }else
-  {
+  }else{
     if(n->next != NULL)
       next = n->next;
-    else
-    {
+    else{
       next = 0;
       last = n->prev;
     }
     
     if(n->prev != NULL)
       prev = n->prev;
-    else
-    {
+    else{
       prev = 0;
       first = n->next;
     }
+    
     if(next != 0)
       next->prev = prev;
     if(prev != 0)
       prev->next = next;
-    
   }
+  
     
    delete n;
    n = NULL;
-    size--;
+   size--;
 }

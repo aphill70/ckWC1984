@@ -251,7 +251,9 @@ void TestPage(){
 }
 
 bool TestPageCreator(){
-  string testPage[5] = {"http://students.cs.byu.edu/~cs240ta/winter2011/projects/crawler/", "http://www.cksuperman.com/test.html", "file:///home/chris/cs240/test/inputFile.html"};
+  string testPage[5] = {"http://students.cs.byu.edu/~cs240ta/winter2011/projects/crawler/", 
+			"http://www.cksuperman.com/test.html", 
+			"file:///home/chris/cs240/test/inputFile.html"};
   
   Url * testurl = new Url(testPage[1]);
   
@@ -289,8 +291,13 @@ bool TestHTMLParserConstructor(){
    * file:///home/chris/cs240/test/inputFile.html - 
    */
   
-  string testParser[5] = {"http://students.cs.byu.edu/~cs240ta/winter2011/projects/crawler/", "http://www.cksuperman.com/test.html", "file:///home/chris/cs240/test/inputFile.html"};
-  string testDesc[5] = {"Web Crawler", "\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus porttitor faucibus neque, ut interdum magna consequa", "This is a header for testing purposes"};
+  string testParser[5] = {"http://students.cs.byu.edu/~cs240ta/winter2011/projects/crawler/", 
+			  "http://www.cksuperman.com/test.html", 
+			  "file:///home/chris/cs240/test/inputFile.html"};
+			  
+  string testDesc[5] = {"Web Crawler", 
+"\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus porttitor faucibus neque, ut interdum magna consequa", 
+			"This is a header for testing purposes"};
   
   int parserans[5] = {7882, 624, 8};
   
@@ -302,7 +309,8 @@ bool TestHTMLParserConstructor(){
       errors[errorcount++] = "Expected word count Did not equal Actual Word Count";
     
     if(parser.getDescription().compare(testDesc[i]) != 0)
-      errors[errorcount++] = "DESCRIPTION did not match expected value " + testDesc[i] + "  -  " + parser.getDescription();
+      errors[errorcount++] = "DESCRIPTION did not match expected value " + 
+			     testDesc[i] + "  -  " + parser.getDescription();
     
 //      parser.~HTMLParser();
   }
@@ -323,7 +331,9 @@ void TestPageDownloader(){
 }
 
 bool TestPageDownloaderUrl(){
-  string testPageUrl[5] = {"http://www.cksuperman.com", "http://www.cksuperman.com/test.html", "file:///user/home/chris/cs240/test/inputFile.html"};
+  string testPageUrl[5] = {"http://www.cksuperman.com", 
+			   "http://www.cksuperman.com/test.html", 
+			   "file:///user/home/chris/cs240/test/inputFile.html"};
   
   for(int i = 0; i < 3; i++){
     Url* testUrl = new Url(testPageUrl[i]);
@@ -366,16 +376,19 @@ bool TestUrlResolver(){
   
 
   if(DownloadUrl->getShortUrl().compare(resolverAns[3]) != 0)
-    errors[errorcount++] = "URL should have been " + resolverAns[3] + " was " + DownloadUrl->getShortUrl();
+    errors[errorcount++] = "URL should have been " + resolverAns[3] + 
+			   " was " + DownloadUrl->getShortUrl();
   
   for(int i = 0; i < 4; i++){
     Url* testUrl = url->resolveUrl(resolverTest[i]);
     
     if(testUrl->getUrl().compare(resolverAns[i]) != 0)
-      errors[errorcount++] = "URL should have been " + resolverAns[i] + " was " + testUrl->getUrl();
+      errors[errorcount++] = "URL should have been " + resolverAns[i] + 
+			     " was " + testUrl->getUrl();
 
     if(testUrl->getPath().compare(resolverPath[i]) != 0)
-      errors[errorcount++] = "URL should have been " + resolverPath[i] + " was " + testUrl->getPath();
+      errors[errorcount++] = "URL should have been " + resolverPath[i] + 
+			     " was " + testUrl->getPath();
     
     delete testUrl;
   }

@@ -95,7 +95,8 @@ Url* Url::resolveUrl(string relUrl){
   string lowrelUrl = relUrl;
   StringUtil::ToLower(lowrelUrl);
   
-  if(lowrelUrl.find("http://") != (unsigned int)-1 || lowrelUrl.find("file://") != (unsigned int)-1){
+  if(lowrelUrl.find("http://") != (unsigned int)-1 || 
+     lowrelUrl.find("file://") != (unsigned int)-1){
     return new Url(relUrl);
   }
   

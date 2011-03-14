@@ -34,8 +34,7 @@ bool StopWords::loadfile(string fileName){
 	ifstream file;
 	file.open(fileName.c_str());
 
-	if (!file.is_open())
-	{
+	if (!file.is_open()){
 		cout << "Unable to open file: " << fileName << endl;
 		return -2;
 	}
@@ -43,8 +42,7 @@ bool StopWords::loadfile(string fileName){
 	lineCount = 0;
 
 	char curLine[1024];
-	while (file.getline(curLine, sizeof(curLine)))
-	{
+	while (file.getline(curLine, sizeof(curLine))){
 		string curLineCopy(curLine);
 		StringUtil::ToLower(curLineCopy);
 		stopwords[lineCount] = curLineCopy;

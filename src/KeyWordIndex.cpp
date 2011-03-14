@@ -3,31 +3,26 @@
 using namespace std;
 
 //!  No-arg constructor.  Initializes an empty KeyWordIndex
-KeyWordIndex::KeyWordIndex(): size(0), root(0), iterator(NULL), iteratorsize(0)
-{
+KeyWordIndex::KeyWordIndex(): size(0), root(0), iterator(NULL), iteratorsize(0){
   return;
 }
 
 
 //!  Copy constructor.  Makes a complete copy of its argument
-KeyWordIndex::KeyWordIndex(const KeyWordIndex & other)
-{
+KeyWordIndex::KeyWordIndex(const KeyWordIndex & other){
   root = ReCopy(other.root);
   size = other.size;
 }
 
 
 //!  Destructor
-KeyWordIndex::~KeyWordIndex()
-{
+KeyWordIndex::~KeyWordIndex(){
   Free(root);
 }
 
-void KeyWordIndex::Free(KeyWordNode * p)
-{
+void KeyWordIndex::Free(KeyWordNode * p){
   size = 0;
-  if(p != NULL)
-  {
+  if(p != NULL){
     Free(p->left);
     Free(p->right);
     delete p;
@@ -38,14 +33,12 @@ void KeyWordIndex::Free(KeyWordNode * p)
   iterator = NULL;
 }
 
-KeyWordNode * KeyWordIndex::ReCopy(KeyWordNode * p)
-{ 
+KeyWordNode * KeyWordIndex::ReCopy(KeyWordNode * p){ 
   KeyWordNode * np;
   
   if(p == NULL)
     return NULL;
-  else
-  {
+  else{
     np = new KeyWordNode(p->value);
     np->left = ReCopy(p->left);
     np->right = ReCopy(p->right);
@@ -58,9 +51,8 @@ KeyWordNode * KeyWordIndex::ReCopy(KeyWordNode * p)
 
 //!  Assignment operator.  Makes a complete copy of its argument
 //!  @return Reference to oneself
-KeyWordIndex& KeyWordIndex::operator =(const KeyWordIndex & other)
-{
-    if (this != &other) {
+KeyWordIndex& KeyWordIndex::operator =(const KeyWordIndex & other){
+    if (this != &other){
          Free(root);
          root = ReCopy(other.root);
 	 size = other.size;
@@ -71,29 +63,25 @@ KeyWordIndex& KeyWordIndex::operator =(const KeyWordIndex & other)
 
 //!  @return a pointer to the root node of the tree, or NULL if the tree is empty.
 //!  @note This is useful for KeyWordIndex clients that need to traverse the tree.)
-KeyWordNode * KeyWordIndex::GetRoot()const
-{
+KeyWordNode * KeyWordIndex::GetRoot()const{
   return root;
 }
 
 
 //!  @return true if the KeyWordIndex is empty, or false if the KeyWordIndex is not empty
-bool KeyWordIndex::IsEmpty() const
-{
+bool KeyWordIndex::IsEmpty() const{
   return (size == 0);
 }
 
 
 //!  Removes all values from the KeyWordIndex
-void KeyWordIndex::Clear()
-{
+void KeyWordIndex::Clear(){
   Free(root);
 }
 
 
 //!  @return the number of values in the KeyWordIndex
-int KeyWordIndex::GetSize() const
-{
+int KeyWordIndex::GetSize() const{
   return size;
 }
 
@@ -104,16 +92,14 @@ int KeyWordIndex::GetSize() const
 //!
 //!  @return a pointer to the newly inserted node, or NULL if v was already
 //!          in the tree (i.e., NULL is used to indicate a duplicate insertion)
-KeyWordNode * KeyWordIndex::Insert(const std::string & v, const std::string & s)
-{
+KeyWordNode * KeyWordIndex::Insert(const std::string & v, const std::string & s){
   KeyWordNode * newNode = new KeyWordNode(v);
   
   if(root == NULL){
     root = newNode;
     root->set->Insert(s);
     
-  }
-  else if(v.compare(root->value) < 0)
+  }else if(v.compare(root->value) < 0)
     if(root->left == NULL){
       root->left = newNode;
       root->left->set->Insert(s);
@@ -125,8 +111,7 @@ KeyWordNode * KeyWordIndex::Insert(const std::string & v, const std::string & s)
       root->right->set->Insert(s);
     }else
       return ReInsert(v, root->right, newNode, s);
-  else
-  {
+  else{
     root->set->Insert(s);
     delete newNode;
     newNode = NULL;
@@ -136,8 +121,10 @@ KeyWordNode * KeyWordIndex::Insert(const std::string & v, const std::string & s)
   return newNode;
 }
 
-KeyWordNode * KeyWordIndex::ReInsert(const std::string & v, KeyWordNode * p, KeyWordNode * nn, const std::string s)
-{
+KeyWordNode * KeyWordIndex::ReInsert(const std::string & v, 
+				     KeyWordNode * p, 
+				     KeyWordNode * nn, 
+				     const std::string s){
   
   if(v.compare(p->value) < 0)
     if(p->left == NULL){
@@ -145,16 +132,13 @@ KeyWordNode * KeyWordIndex::ReInsert(const std::string & v, KeyWordNode * p, Key
       p->left->set->Insert(s);
     }else
     return ReInsert(v, p->left, nn, s);
-  else if(v.compare(p->value) > 0)
-  {
+  else if(v.compare(p->value) > 0){
     if(p->right == NULL){
       p->right = nn;
       p->right->set->Insert(s);
     }else
       return ReInsert(v, p->right, nn, s);
-  }
-    else
-    {
+  }else{
       p->set->Insert(s);
       delete nn;
       nn = NULL;
@@ -169,12 +153,10 @@ KeyWordNode * KeyWordIndex::ReInsert(const std::string & v, KeyWordNode * p, Key
 //!  @param v The new value being searched for
 //!
 //!  @return a pointer to the node containing v, or NULL if v is not in the tree
-KeyWordNode * KeyWordIndex::Find(const std::string & v) const
-{
+KeyWordNode * KeyWordIndex::Find(const std::string & v) const{
   KeyWordNode * p = root;
   
-  while(p != NULL)
-  {
+  while(p != NULL){
     if(p->GetValue().compare(v) > 0)
       p = p->left;
     else if(p->GetValue().compare(v) < 0)
@@ -185,18 +167,6 @@ KeyWordNode * KeyWordIndex::Find(const std::string & v) const
   
   return NULL;
 }
-
-
-//! @NOTE: YOU ARE NOT REQUIRED TO IMPLEMENT THE Remove METHOD BELOW
-//!        (BUT YOU CAN IF YOU WANT TO)
-//!
-//!  Removes value v from the tree
-//!
-//!  @param v The value being removed from the tree
-//!
-//!  @return true if v was removed from the tree, or false if v was not in the tree
-//bool Remove(const std::string & v);
-
 
 //!
 //!

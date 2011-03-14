@@ -2,31 +2,26 @@
 using namespace std;
 
 //!  No-arg constructor.  Initializes an empty PageHistory
-PageHistory::PageHistory(): size(0), root(0)
-{
+PageHistory::PageHistory(): size(0), root(0){
   return;
 }
 
 
 //!  Copy constructor.  Makes a complete copy of its argument
-PageHistory::PageHistory(const PageHistory & other)
-{
+PageHistory::PageHistory(const PageHistory & other){
   root = ReCopy(other.root);
   size = other.size;
 }
 
 
 //!  Destructor
-PageHistory::~PageHistory()
-{
+PageHistory::~PageHistory(){
   Free(root);
 }
 
-void PageHistory::Free(PageHistoryNode * p)
-{
+void PageHistory::Free(PageHistoryNode * p){
   size = 0;
-  if(p != NULL)
-  {
+  if(p != NULL){
     Free(p->left);
     Free(p->right);
     delete p;
@@ -35,28 +30,24 @@ void PageHistory::Free(PageHistoryNode * p)
 root = NULL;
 }
 
-PageHistoryNode * PageHistory::ReCopy(PageHistoryNode * p)
-{ 
+PageHistoryNode * PageHistory::ReCopy(PageHistoryNode * p){
   PageHistoryNode * np;
   
   if(p == NULL)
     return NULL;
-  else
-  {
+  else{
     np = new PageHistoryNode(p->value);
     np->left = ReCopy(p->left);
     np->right = ReCopy(p->right);
     
     return np;    
   }
-  
 }
 
 
 //!  Assignment operator.  Makes a complete copy of its argument
 //!  @return Reference to oneself
-PageHistory& PageHistory::operator =(const PageHistory & other)
-{
+PageHistory& PageHistory::operator =(const PageHistory & other){
     if (this != &other) {
          Free(root);
          root = ReCopy(other.root);
@@ -68,29 +59,25 @@ PageHistory& PageHistory::operator =(const PageHistory & other)
 
 //!  @return a pointer to the root node of the tree, or NULL if the tree is empty.
 //!  @note This is useful for PageHistory clients that need to traverse the tree.)
-PageHistoryNode * PageHistory::GetRoot()const
-{
+PageHistoryNode * PageHistory::GetRoot()const{
   return root;
 }
 
 
 //!  @return true if the PageHistory is empty, or false if the PageHistory is not empty
-bool PageHistory::IsEmpty() const
-{
+bool PageHistory::IsEmpty() const{
   return (size == 0);
 }
 
 
 //!  Removes all values from the PageHistory
-void PageHistory::Clear()
-{
+void PageHistory::Clear(){
   Free(root);
 }
 
 
 //!  @return the number of values in the PageHistory
-int PageHistory::GetSize() const
-{
+int PageHistory::GetSize() const{
   return size;
 }
 
@@ -101,8 +88,7 @@ int PageHistory::GetSize() const
 //!
 //!  @return a pointer to the newly inserted node, or NULL if v was already
 //!          in the tree (i.e., NULL is used to indicate a duplicate insertion)
-PageHistoryNode * PageHistory::Insert(Page * v)
-{
+PageHistoryNode * PageHistory::Insert(Page * v){
   
   PageHistoryNode * newNode = new PageHistoryNode(v);
   
@@ -118,8 +104,7 @@ PageHistoryNode * PageHistory::Insert(Page * v)
       root->right = newNode;
     else
       return ReInsert(v, root->right, newNode);
-  else
-  {
+  else{
     delete newNode;
     newNode = NULL;
     return NULL;
@@ -128,23 +113,19 @@ PageHistoryNode * PageHistory::Insert(Page * v)
   return newNode;
 }
 
-PageHistoryNode * PageHistory::ReInsert(Page* v, PageHistoryNode* p, PageHistoryNode* nn)
-{
+PageHistoryNode * PageHistory::ReInsert(Page* v, PageHistoryNode* p, PageHistoryNode* nn){
   
   if(v->getUrl()->getShortUrl().compare(p->value->getUrl()->getShortUrl()) < 0)
     if(p->left == NULL)
       p->left = nn;
     else
     return ReInsert(v, p->left, nn);
-  else if(v->getUrl()->getShortUrl().compare(p->value->getUrl()->getShortUrl()) > 0)
-  {
+  else if(v->getUrl()->getShortUrl().compare(p->value->getUrl()->getShortUrl()) > 0){
     if(p->right == NULL)
       p->right = nn;
     else
       return ReInsert(v, p->right, nn);
-  }
-    else
-    {
+  }else{
       delete nn;
       nn = NULL;
       return NULL;
@@ -158,12 +139,10 @@ PageHistoryNode * PageHistory::ReInsert(Page* v, PageHistoryNode* p, PageHistory
 //!  @param v The new value being searched for
 //!
 //!  @return a pointer to the node containing v, or NULL if v is not in the tree
-PageHistoryNode * PageHistory::Find(Page * v) const
-{
+PageHistoryNode * PageHistory::Find(Page * v) const{
   PageHistoryNode * p = root;
   
-  while(p != NULL)
-  {
+  while(p != NULL){
     if(p->GetValue()->getUrl()->getShortUrl().compare(v->getUrl()->getShortUrl()) > 0)
       p = p->left;
     else if(p->GetValue()->getUrl()->getShortUrl().compare(v->getUrl()->getShortUrl()) < 0)
