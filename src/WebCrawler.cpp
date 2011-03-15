@@ -38,7 +38,6 @@ WebCrawler::~WebCrawler(){
 
 // Function containing main crawling algrithm
 void WebCrawler::CrawlWeb(){
-  
   Page * firstpage = new Page (starturl);
   
   history->Insert(firstpage);
@@ -51,10 +50,10 @@ void WebCrawler::CrawlWeb(){
       
       currentPage->ExtractData();
 
-//       cout << currentPage->getUrl()->getShortUrl() << endl;
+       cout << currentPage->getUrl()->getShortUrl() << endl;
       
       if(currentPage->isBadPage()){
-// 	cout << "badPage" << endl;
+ 	cout << "badPage" << endl;
 	continue;
       }
       currentPage->wordIteratorInit();
@@ -72,10 +71,11 @@ void WebCrawler::CrawlWeb(){
       while(currentPage->linkIteratorHasNext()){
 	
 	string tmplink = currentPage->linkIteratorNext();
-	
 	Url * tmrl = currentPage->getUrl()->resolveUrl(tmplink);
-	
+// 	cout << tmplink << endl;
+// 	cout << tmrl->getShortUrl() << endl;
 	if(IsHtml(tmrl) && IsInScope(tmrl)){
+// 	cout << tmrl->getShortUrl() << endl;
 	  Page * tmpg = new Page(tmrl);
 	  
 	  if(history->Insert(tmpg) != NULL){
@@ -108,7 +108,7 @@ bool WebCrawler::IsHtml(Url * p){
 
   if(path.compare("/") == 0){
     return true;
-  }else if(path.find(".") == (unsigned int)-1){
+  }else if(path.find(".") == -1){
     return true;
   }else if(boost::regex_match(path, re)){
     return true;

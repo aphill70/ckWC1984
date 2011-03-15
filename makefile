@@ -1,11 +1,11 @@
 EXE=
 LIBSRC=utils/obj
 
-memBin : bin/WebCrawl
-	valgrind --tool=memcheck --leak-check=yes --max-stackframe=5000000 --show-reachable=yes --suppressions=test/config/string.supp  bin/WebCrawl http://www.cksuperman.com/test.html test/output/output.txt ./test/input/stopword.txt
+memBin : bin/crawler
+	valgrind --tool=memcheck --leak-check=yes --max-stackframe=5000000 --show-reachable=yes --suppressions=test/config/string.supp  bin/crawler http://www.cksuperman.com/test.html test/output/output.txt ./test/input/stopword.txt
 
 
-bin : bin/WebCrawl
+bin : bin/crawler
 
 memTest : bin/TestDriver
 	valgrind --tool=memcheck --leak-check=yes --max-stackframe=5000000 --show-reachable=yes --suppressions=test/config/string.supp  bin/TestDriver
@@ -19,11 +19,11 @@ clean :
 	@- rm -f utils/obj/*.o > /dev/null 2>&1
 	@- rm -f bin/* > /dev/null 2>&1
 
-bin/WebCrawl : obj/MainDriver.o lib/libutils.a obj/Url.o obj/WebCrawler.o obj/PageQueue.o obj/PageHistory.o obj/KeyWordIndex.o obj/PrintXml.o
-	g++ -o bin/WebCrawl obj/*.o lib/libutils.a -lboost_regex
+bin/crawler : obj/MainDriver.o lib/libutils.a obj/Url.o obj/WebCrawler.o obj/PageQueue.o obj/PageHistory.o obj/KeyWordIndex.o obj/PrintXml.o
+	g++ -o bin/crawler obj/MainDriver.o obj/PrintXml.o obj/WebCrawler.o obj/StopWords.o obj/Url.o obj/HTMLParser.o obj/Page.o obj/OccurrenceSet.o obj/PageQueue.o obj/KeyWordIndex.o obj/PageHistory.o lib/libutils.a -lboost_regex
 
 bin/TestDriver : obj/TestDriver.o lib/libutils.a obj/StopWords.o obj/Url.o obj/HTMLParser.o obj/Page.o obj/OccurrenceSet.o obj/PageQueue.o obj/KeyWordIndex.o obj/PageHistory.o
-	g++ -g -o bin/TestDriver obj/*.o lib/libutils.a -lboost_regex
+	g++ -g -o bin/TestDriver obj/TestDriver.o obj/StopWords.o obj/Url.o obj/HTMLParser.o obj/Page.o obj/OccurrenceSet.o obj/PageQueue.o obj/KeyWordIndex.o obj/PageHistory.o lib/libutils.a -lboost_regex
 
 obj/MainDriver.o : src/MainDriver.cpp
 	g++ -c -g -Wall -o obj/MainDriver.o -I inc/ -I utils/inc src/MainDriver.cpp

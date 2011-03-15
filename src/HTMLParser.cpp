@@ -70,6 +70,7 @@ int HTMLParser::getLinkCount(){
 }
 
 void HTMLParser::runParser(string url){
+  
   try{
     inputStream = new URLInputStream(url);
     
@@ -147,6 +148,8 @@ void HTMLParser::processBody(HTMLTokenizer & tokenizer){
 	processHeader(tokenizer);
     }else if(isScriptStart(curToken)){
       processScript(tokenizer);
+    }else if(isBodyEnd(curToken)){
+      return;
     }
     
   }
@@ -176,18 +179,21 @@ void HTMLParser::processHeader(HTMLTokenizer & tokenizer){
       processText(curToken.GetValue());
     }else if(isHeaderEnd(curToken))
       return;
+    else if(isLinkStart(curToken))
+      processLink(curToken);
   }
 }
 
-void HTMLParser::processText(string text){
+void HTMLParser::processText(string text, bool desc){
   assert(!text.empty());
   
+  if(desc)
   processDescription(text);
     
   StringUtil::ToLower(text);
   StringUtil::Trim(text);
 
-  string exp = "[a-zA-Z][a-zA-Z0-9_-]*";
+  string exp = "[a-zA-Z0-9_-]*";
   const int MATCH = 0;
 
   boost::regex re(exp, boost::regex_constants::icase);
@@ -197,12 +203,15 @@ void HTMLParser::processText(string text){
 
   while(finder != no_match){
     string regtok(*finder);
-    words[wordcount++] = regtok;
-//     TRACE("\"" << regtok << "\"");
+
+    if(isalpha(regtok[0])){
+      words[wordcount++] = regtok;
+      TRACE("\"" << regtok << "\"");
+    }
     *finder++; //Move to the next token, or to no_match state
- 		
+
     if(wordcount == arraysize)
-    growArray();
+      growArray();
   }
 }
 
@@ -213,7 +222,6 @@ void HTMLParser::processDescription(string text){
 }
 
 void HTMLParser::processLink(HTMLToken & token){
-  
   if(token.AttributeExists("href") && !isFragment(token.GetAttribute("href"))){
     links[linkcount++] = token.GetAttribute("href");
     if(linkcount == linkarraysize)
@@ -234,67 +242,98 @@ void HTMLParser::processScript(HTMLTokenizer & tokenizer){
 void HTMLParser::descriptionProcesser(string text){
   string::iterator p = text.begin();
   while(p < text.end()){
-    description += *p;
-    
-    if(isalnum(*p) && desriptionlength != 100){
+    if(!iswspace(*p) && desriptionlength != 100){
       desriptionlength++;
     }else if(desriptionlength == 100)
       return;
+    
+    description += *p;
+    
     p++;
   }
 }
 
 bool HTMLParser::isHeadEnd(HTMLToken & token){
-  return (token.GetType() == TAG_END && token.GetValue().compare("head") == 0);
+  string lower = token.GetValue();
+  StringUtil::ToLower(lower);
+  return (token.GetType() == TAG_END && lower.compare("head") == 0);
 }
 
 bool HTMLParser::isHeadStart(HTMLToken & token){
-  return (token.GetType() == TAG_START && token.GetValue().compare("head") == 0);
+  string lower = token.GetValue();
+  StringUtil::ToLower(lower);
+  return (token.GetType() == TAG_START && lower.compare("head") == 0);
 }
 
 bool HTMLParser::isTitleStart(HTMLToken & token){
-  return (token.GetType() == TAG_START && token.GetValue() == "title");
+  string lower = token.GetValue();
+  StringUtil::ToLower(lower);
+  return (token.GetType() == TAG_START && lower == "title");
 }
 
 bool HTMLParser::isTitleEnd(HTMLToken & token){
-  return (token.GetType() == TAG_END && token.GetValue().compare("title") == 0);
+  string lower = token.GetValue();
+  StringUtil::ToLower(lower);
+  return (token.GetType() == TAG_END && lower.compare("title") == 0);
 }
 
 bool HTMLParser::isBodyStart(HTMLToken & token){
-  return (token.GetType() == TAG_START && token.GetValue() == "body");
+  string lower = token.GetValue();
+  StringUtil::ToLower(lower);
+  return (token.GetType() == TAG_START && lower == "body");
+}
+
+bool HTMLParser::isBodyEnd(HTMLToken & token){
+  string lower = token.GetValue();
+  StringUtil::ToLower(lower);
+  return (token.GetType() == TAG_END && lower == "body");
 }
 
 bool HTMLParser::isHTMLStart(HTMLToken & token){
-  return (token.GetType() == TAG_START && token.GetValue() == "html");  
+  string lower = token.GetValue();
+  StringUtil::ToLower(lower);
+  return (token.GetType() == TAG_START && lower == "html");  
 }
 
 bool HTMLParser::isText(HTMLToken & token){
-  return (token.GetType() == TEXT && !isWhiteSpace(token.GetValue()));
+  string lower = token.GetValue();
+  StringUtil::ToLower(lower);
+  return (token.GetType() == TEXT && !isWhiteSpace(lower));
 }
 
 bool HTMLParser::isLinkStart(HTMLToken & token){
-  return (token.GetType() == TAG_START && token.GetValue() == "a");  
+  string lower = token.GetValue();
+  StringUtil::ToLower(lower);
+  return (token.GetType() == TAG_START && lower == "a");  
 }
 
 bool HTMLParser::isScriptStart(HTMLToken & token){
-  return (token.GetType() == TAG_START && token.GetValue() == "script");  
+  string lower = token.GetValue();
+  StringUtil::ToLower(lower);
+  return (token.GetType() == TAG_START && lower == "script");  
 }
 
 bool HTMLParser::isScriptEnd(HTMLToken & token){
-  return (token.GetType() == TAG_END && token.GetValue() == "script");    
+  string lower = token.GetValue();
+  StringUtil::ToLower(lower);
+  return (token.GetType() == TAG_END && lower == "script");    
 }
 
 bool HTMLParser::isHeaderStart(HTMLToken & token){
+  string lower = token.GetValue();
+  StringUtil::ToLower(lower);
 	boost::regex re("h[1-9]");
-	return (boost::regex_match(token.GetValue(), re) && token.GetType() == TAG_START);
+	return (boost::regex_match(lower, re) && token.GetType() == TAG_START);
 }
 bool HTMLParser::isHeaderEnd(HTMLToken & token){
+  string lower = token.GetValue();
+  StringUtil::ToLower(lower);
 	boost::regex re("[hH][1-9]");
-	return (boost::regex_match(token.GetValue(), re) && token.GetType() == TAG_END);
+	return (boost::regex_match(lower, re) && token.GetType() == TAG_END);
 }
 
 bool HTMLParser::isFragment(string link){
-	boost::regex re("#[ a-zA-Z0-9_-]*");
+	boost::regex re("^#[ a-zA-Z0-9_-]*");
 	return (boost::regex_match(link, re));
 }
 

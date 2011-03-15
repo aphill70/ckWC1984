@@ -28,6 +28,9 @@ void PageHistory::Free(PageHistoryNode * p){
     p = NULL;
   }
 root = NULL;
+
+delete [] iterator;
+iterator = NULL;
 }
 
 PageHistoryNode * PageHistory::ReCopy(PageHistoryNode * p){

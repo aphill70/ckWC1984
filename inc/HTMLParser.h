@@ -154,7 +154,7 @@ private:
    * from a TEXT token and parses it for words and 
    * links
    */
-  void processText(string text);
+  void processText(string text, bool desc = false);
   
   /**
    * the passed in token should be an <a> link
@@ -222,6 +222,12 @@ private:
    * @return true if the token is a <body> tag
    */
   bool isBodyStart(HTMLToken & token);
+
+  /**
+   * 
+   * 
+   */
+  bool isBodyEnd(HTMLToken & token);
   
   /**
    * isHTMLStart
@@ -318,5 +324,6 @@ private:
    * Procsses the first 100 characters for the description
    */
   void descriptionProcesser(string text);
+    
 };
 #endif
