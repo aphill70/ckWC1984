@@ -270,8 +270,8 @@ void HTTPInputStream::SendRequest()
 	
 	ostringstream request;
 	request << "GET " << path;
-	request << " HTTP/1.0\r\n";
-	request << "Host: " << host << ":" << port << "\r\n\r\n";
+	request << " HTTP/1.1\r\n";
+	request << "Host: " << host << "\r\n\r\n";
 	
 	string completeRequest = request.str();
 
